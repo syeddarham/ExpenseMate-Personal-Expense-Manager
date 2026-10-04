@@ -8,6 +8,7 @@ import '../../models/transaction.dart';
 import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import '../../utils/helpers.dart';
+import '../category/categories_page.dart';
 import '../scan/scan_screen.dart';
 
 /// Screen 03: Add Transaction (Expense & Income Logging)
@@ -24,17 +25,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
 
-  late TransactionCategory _selectedCategory;
+  TransactionCategory? _selectedCategory;
   String _selectedAccount = 'Debit Card';
   DateTime _selectedDate = DateTime.now();
 
   final List<String> _accounts = ['Cash', 'Debit Card', 'Credit Card', 'Bank Account', 'Digital Wallet'];
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedCategory = TransactionCategory.defaultCategories[0];
-  }
 
   @override
   void dispose() {
@@ -42,6 +37,205 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     _amountController.dispose();
     _noteController.dispose();
     super.dispose();
+  }
+
+  void _showQuickAddCategoryModal() {
+    final nameController = TextEditingController();
+    String selectedIcon = 'restaurant';
+    Color selectedColor = TransactionCategory.availableColors[0];
+    bool isSaving = false;
+    String? errorText;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXl)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (modalContext, setModalState) {
+            final iconData = TransactionCategory.parseIconName(selectedIcon);
+            final colorHex = '#${(selectedColor.toARGB32() & 0x00FFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + AppSpacing.lg,
+                left: AppSpacing.lg,
+                right: AppSpacing.lg,
+                top: AppSpacing.lg,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Add ${_selectedType == TransactionType.expense ? "Expense" : "Income"} Category',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        ),
+                        IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+
+                    // Preview
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: selectedColor.withAlpha(25),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                        border: Border.all(color: selectedColor.withAlpha(80)),
+                      ),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: selectedColor,
+                            radius: 18,
+                            child: Icon(iconData, color: Colors.white, size: 18),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              nameController.text.trim().isEmpty ? 'Category Name' : nameController.text.trim(),
+                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    if (errorText != null) ...[
+                      Text(errorText!, style: const TextStyle(color: AppColors.expense, fontSize: 12, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
+
+                    CustomTextField(
+                      label: 'Category Name',
+                      hint: 'e.g. Subscriptions, Groceries, Bonus',
+                      controller: nameController,
+                      prefixIcon: const Icon(Icons.label_outline, color: AppColors.primary),
+                      onChanged: (_) => setModalState(() {}),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Icon selector
+                    const Text('Icon', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const SizedBox(height: 6),
+                    SizedBox(
+                      height: 90,
+                      child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: TransactionCategory.availableIcons.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 6,
+                          crossAxisSpacing: 6,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemBuilder: (ctx, i) {
+                          final item = TransactionCategory.availableIcons[i];
+                          final iconName = item['name'] as String;
+                          final icon = item['icon'] as IconData;
+                          final isSelected = selectedIcon == iconName;
+
+                          return GestureDetector(
+                            onTap: () => setModalState(() => selectedIcon = iconName),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isSelected ? selectedColor.withAlpha(40) : const Color(0xFFF9FAFB),
+                                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                                border: Border.all(color: isSelected ? selectedColor : AppColors.border, width: isSelected ? 2 : 1),
+                              ),
+                              child: Icon(icon, color: isSelected ? selectedColor : AppColors.textSecondary, size: 20),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Color selector
+                    const Text('Color', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const SizedBox(height: 6),
+                    SizedBox(
+                      height: 40,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: TransactionCategory.availableColors.length,
+                        separatorBuilder: (context, index) => const SizedBox(width: 8),
+                        itemBuilder: (ctx, i) {
+                          final c = TransactionCategory.availableColors[i];
+                          final isSelected = selectedColor.toARGB32() == c.toARGB32();
+                          return GestureDetector(
+                            onTap: () => setModalState(() => selectedColor = c),
+                            child: Container(
+                              width: 34,
+                              height: 34,
+                              decoration: BoxDecoration(
+                                color: c,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: isSelected ? Colors.black87 : Colors.transparent, width: 2),
+                              ),
+                              child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 18) : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    CustomButton(
+                      label: 'Add Category',
+                      isLoading: isSaving,
+                      onPressed: () async {
+                        final name = nameController.text.trim();
+                        if (name.isEmpty) {
+                          setModalState(() => errorText = 'Please enter a category name');
+                          return;
+                        }
+
+                        setModalState(() {
+                          isSaving = true;
+                          errorText = null;
+                        });
+
+                        final nav = Navigator.of(ctx);
+                        final expenseState = Provider.of<ExpenseState>(context, listen: false);
+                        final newCat = await expenseState.addCategory(
+                          name: name,
+                          icon: selectedIcon,
+                          color: colorHex,
+                          isExpense: _selectedType == TransactionType.expense,
+                        );
+
+                        if (!mounted) return;
+                        if (newCat != null) {
+                          setState(() {
+                            _selectedCategory = newCat;
+                          });
+                          nav.pop();
+                        } else {
+                          setModalState(() {
+                            isSaving = false;
+                            errorText = 'Could not create category. Name may already exist.';
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _saveTransaction() {
@@ -56,14 +250,24 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       return;
     }
 
-    final title = _titleController.text.trim().isEmpty ? _selectedCategory.name : _titleController.text.trim();
+    final expenseState = Provider.of<ExpenseState>(context, listen: false);
+    final availableCategories = expenseState.categories.where((cat) {
+      return _selectedType == TransactionType.expense ? cat.isExpense : !cat.isExpense;
+    }).toList();
+
+    final category = _selectedCategory ??
+        (availableCategories.isNotEmpty
+            ? availableCategories.first
+            : TransactionCategory.defaultCategories.first);
+
+    final title = _titleController.text.trim().isEmpty ? category.name : _titleController.text.trim();
 
     final newTx = FinancialTransaction(
       id: 'tx_${DateTime.now().millisecondsSinceEpoch}',
       title: title,
       amount: amount,
       type: _selectedType,
-      category: _selectedCategory,
+      category: category,
       date: _selectedDate,
       account: _selectedAccount,
       note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
@@ -74,9 +278,17 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final availableCategories = TransactionCategory.defaultCategories.where((cat) {
+    final expenseState = Provider.of<ExpenseState>(context);
+    final availableCategories = expenseState.categories.where((cat) {
       return _selectedType == TransactionType.expense ? cat.isExpense : !cat.isExpense;
     }).toList();
+
+    // Ensure _selectedCategory points to an available category of the current type
+    if (_selectedCategory == null || !availableCategories.any((c) => c.id == _selectedCategory!.id)) {
+      if (availableCategories.isNotEmpty) {
+        _selectedCategory = availableCategories.first;
+      }
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -103,10 +315,25 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             ),
             const SizedBox(height: AppSpacing.md),
 
-            // Category Selection
-            const Text(
-              'Select Category',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+            // Category Selection Header with Manage link
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Select Category',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CategoriesPage()),
+                  ),
+                  child: const Text(
+                    'Manage Categories',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: AppSpacing.xs),
             _buildCategoryGrid(availableCategories),
@@ -133,50 +360,54 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
             // Add Receipt Attachment (from Figma Screen 20)
             GestureDetector(
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final result = await Navigator.push<String>(
                   context,
                   MaterialPageRoute(builder: (_) => const ScanScreen()),
                 );
+                if (result != null && mounted) {
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text('Receipt scan saved: $result'),
+                      backgroundColor: AppColors.primary,
+                    ),
+                  );
+                }
               },
               child: Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  border: Border.all(color: AppColors.border, style: BorderStyle.solid),
+                  border: Border.all(
+                    color: AppColors.primary.withAlpha(128),
+                    style: BorderStyle.solid,
+                  ),
                 ),
-                child: Row(
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                      ),
-                      child: const Icon(Icons.receipt_long_rounded, color: AppColors.primaryDark, size: 22),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Add receipt', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                          Text('Optional · JPG, PNG or PDF', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
-                        ],
+                    Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
+                    SizedBox(width: AppSpacing.sm),
+                    Text(
+                      'Add Receipt / Invoice Attachment',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
                       ),
                     ),
-                    const Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
 
-            // Save Transaction Button
+            // Save / Submit Button
             CustomButton(
-              label: 'Save transaction',
-              icon: Icons.check_circle_outline,
+              label: 'Save Transaction',
               onPressed: _saveTransaction,
             ),
             const SizedBox(height: AppSpacing.md),
@@ -200,7 +431,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               onTap: () {
                 setState(() {
                   _selectedType = TransactionType.expense;
-                  _selectedCategory = TransactionCategory.defaultCategories[0];
+                  _selectedCategory = null;
                 });
               },
               child: Container(
@@ -225,7 +456,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               onTap: () {
                 setState(() {
                   _selectedType = TransactionType.income;
-                  _selectedCategory = TransactionCategory.defaultCategories[6];
+                  _selectedCategory = null;
                 });
               },
               child: Container(
@@ -270,6 +501,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
                   color: _selectedType == TransactionType.expense ? AppColors.expense : AppColors.income,
+                  fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
                 ),
               ),
               const SizedBox(width: 8),
@@ -302,10 +534,42 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
-      itemCount: categories.length,
+      itemCount: categories.length + 1,
       itemBuilder: (context, index) {
+        if (index == categories.length) {
+          // "+ Add New" button
+          return GestureDetector(
+            onTap: _showQuickAddCategoryModal,
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF9FAFB),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                border: Border.all(
+                  color: AppColors.primary.withAlpha(120),
+                ),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_circle_outline, color: AppColors.primary, size: 24),
+                  SizedBox(height: 6),
+                  Text(
+                    'Add New',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
         final cat = categories[index];
-        final isSelected = _selectedCategory.id == cat.id;
+        final isSelected = _selectedCategory?.id == cat.id;
         return GestureDetector(
           onTap: () => setState(() => _selectedCategory = cat),
           child: Container(
@@ -342,6 +606,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   }
 
   Widget _buildAccountDropdown() {
+    final expenseState = Provider.of<ExpenseState>(context);
+    final accountList = expenseState.accounts.isNotEmpty
+        ? expenseState.accounts.map((a) => a.name).toList()
+        : _accounts;
+    final currentAccount = accountList.contains(_selectedAccount)
+        ? _selectedAccount
+        : accountList.first;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -356,11 +628,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: _selectedAccount,
               isExpanded: true,
-              items: _accounts
-                  .map((acc) => DropdownMenuItem(value: acc, child: Text(acc, style: const TextStyle(fontSize: 13))))
-                  .toList(),
+              value: currentAccount,
+              items: accountList.map((acc) {
+                return DropdownMenuItem(
+                  value: acc,
+                  child: Text(acc, style: const TextStyle(fontSize: 13)),
+                );
+              }).toList(),
               onChanged: (val) {
                 if (val != null) setState(() => _selectedAccount = val);
               },
@@ -383,9 +658,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               context: context,
               initialDate: _selectedDate,
               firstDate: DateTime(2020),
-              lastDate: DateTime(2030),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
             );
-            if (picked != null) setState(() => _selectedDate = picked);
+            if (picked != null) {
+              setState(() => _selectedDate = picked);
+            }
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -397,8 +674,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(AppHelpers.formatDate(_selectedDate), style: const TextStyle(fontSize: 13)),
-                const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textMuted),
+                Text(
+                  AppHelpers.formatDate(_selectedDate),
+                  style: const TextStyle(fontSize: 13),
+                ),
+                const Icon(Icons.calendar_today, size: 16, color: AppColors.textSecondary),
               ],
             ),
           ),

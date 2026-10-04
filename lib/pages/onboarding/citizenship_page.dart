@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../components/custom_button.dart';
 import '../../utils/constants.dart';
+import '../../utils/countries_data.dart';
 import 'select_currency_page.dart';
 
 /// Screen 14: 14_Citizenship
@@ -13,17 +14,26 @@ class CitizenshipPage extends StatefulWidget {
 
 class _CitizenshipPageState extends State<CitizenshipPage> {
   String _selectedCountry = 'United States';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
-  final List<Map<String, String>> _countries = [
-    {'name': 'United States', 'code': 'US', 'flag': '🇺🇸'},
-    {'name': 'Singapore', 'code': 'SG', 'flag': '🇸🇬'},
-    {'name': 'Switzerland', 'code': 'CH', 'flag': '🇨🇭'},
-    {'name': 'Indonesia', 'code': 'ID', 'flag': '🇮🇩'},
-    {'name': 'United Kingdom', 'code': 'GB', 'flag': '🇬🇧'},
-    {'name': 'Turkey', 'code': 'TR', 'flag': '🇹🇷'},
-    {'name': 'Greece', 'code': 'GR', 'flag': '🇬🇷'},
-    {'name': 'Germany', 'code': 'DE', 'flag': '🇩🇪'},
-  ];
+  final List<Map<String, String>> _countries = AppCountries.all;
+
+  List<Map<String, String>> get _displayedCountries {
+    if (_searchQuery.trim().isEmpty) return _countries;
+    final q = _searchQuery.toLowerCase().trim();
+    return _countries.where((c) {
+      final name = c['name']?.toLowerCase() ?? '';
+      final code = c['code']?.toLowerCase() ?? '';
+      return name.contains(q) || code.contains(q);
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +60,52 @@ class _CitizenshipPageState extends State<CitizenshipPage> {
                 'Please select your citizenship or primary residence country.',
                 style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
+
+              // Search Bar
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  decoration: InputDecoration(
+                    hintText: 'Search country or code...',
+                    hintStyle: const TextStyle(fontSize: 14, color: AppColors.textMuted),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.textMuted, size: 20),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 18, color: AppColors.textMuted),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
 
               // Country list
               Expanded(
-                child: ListView.separated(
-                  itemCount: _countries.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
-                  itemBuilder: (context, index) {
-                    final country = _countries[index];
+                child: _displayedCountries.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No country found for "$_searchQuery"',
+                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                        ),
+                      )
+                    : ListView.separated(
+                        itemCount: _displayedCountries.length,
+                        separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
+                        itemBuilder: (context, index) {
+                          final country = _displayedCountries[index];
                     final isSelected = _selectedCountry == country['name'];
 
                     return GestureDetector(

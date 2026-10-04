@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
+import '../../services/auth_service.dart';
+import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import 'email_verification_page.dart';
 
@@ -22,6 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _agreeToTerms = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -32,7 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  void _handleSignUp() {
+  Future<void> _handleSignUp() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -44,12 +48,42 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => EmailVerificationPage(email: _emailController.text),
-      ),
+    setState(() => _isLoading = true);
+    final expenseState = Provider.of<ExpenseState>(context, listen: false);
+    final result = await AuthService().register(
+      fullName: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      currencyCode: expenseState.currencyCode,
+      currencySymbol: expenseState.currencySymbol,
     );
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+    if (result['success'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message'] as String? ?? 'Verification code sent to your email'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => EmailVerificationPage(
+            email: _emailController.text.trim(),
+            debugCode: result['debug_code'] as String?,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error'] as String? ?? 'Sign up failed'),
+          backgroundColor: AppColors.expense,
+        ),
+      );
+    }
   }
 
   @override
@@ -166,6 +200,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 // Sign Up Button
                 CustomButton(
                   label: 'Sign Up',
+                  isLoading: _isLoading,
                   onPressed: _handleSignUp,
                 ),
                 const SizedBox(height: AppSpacing.xl),

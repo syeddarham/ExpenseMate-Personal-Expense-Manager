@@ -10,12 +10,12 @@ visual analytics.
 The project is based on a UI/UX design created in Figma and will be
 implemented as a full-stack application using Flutter for the client
 application, Node.js with Express for the backend REST API, and
-PostgreSQL for persistent data storage.
+MySQL for persistent data storage.
 
 The system follows a Client-Server architecture. Flutter acts as the
 client, communicating with the Node.js/Express backend through HTTP/REST
 APIs. The backend handles authentication, validation, business logic,
-and database operations through PostgreSQL.
+and database operations through MySQL.
 
 System Architecture
 
@@ -25,9 +25,9 @@ Flutter
    ▼
 Node.js / Express
    │
-   │ PostgreSQL Driver / ORM
+   │ MySQL driver
    ▼
-PostgreSQL
+MySQL
 
 2. Target Audience and Value Proposition
 
@@ -224,9 +224,9 @@ Layer               Technology
 
 Frontend / Client   Flutter
 Backend / Server    Node.js + Express
-Database            PostgreSQL
+Database            MySQL
 Communication       HTTP / REST API
-Database Access     PostgreSQL Driver or ORM
+Database Access     MySQL Driver or ORM
 Frontend Testing    Flutter / Dart Testing
 Backend Testing     Node.js Testing Framework
 
@@ -258,7 +258,7 @@ Performs database operations.
 
 Returns structured responses to the Flutter client.
 
-PostgreSQL
+MySQL
 
 Stores persistent application data.
 
@@ -359,7 +359,7 @@ Validation & Business Logic
     │
     │ SQL / ORM
     ▼
-PostgreSQL
+ MySQL
     │
     ▼
 Node.js / Express

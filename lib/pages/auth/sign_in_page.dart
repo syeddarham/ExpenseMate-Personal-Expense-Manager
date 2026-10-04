@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../services/auth_service.dart';
+import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
+import '../home/home_page.dart';
+import 'email_verification_page.dart';
 import 'forgot_password_page.dart';
 import 'sign_up_page.dart';
-import '../onboarding/citizenship_page.dart';
 
 /// Screen 04 & 05: 04_Sign in / 05_Sign in Filled
 class SignInPage extends StatefulWidget {
@@ -33,13 +36,31 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> _handleSignIn() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-    final success = await AuthService().login(_emailController.text, _passwordController.text);
+    final result = await AuthService().login(_emailController.text, _passwordController.text);
     setState(() => _isLoading = false);
 
-    if (success && mounted) {
+    if (!mounted) return;
+    if (result['success'] == true) {
+      // Load user financial data into ExpenseState
+      Provider.of<ExpenseState>(context, listen: false).loadInitialData();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const CitizenshipPage()),
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    } else {
+      if (result['needsVerification'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EmailVerificationPage(email: _emailController.text.trim()),
+          ),
+        );
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error'] ?? 'Sign in failed'),
+          backgroundColor: AppColors.expense,
+        ),
       );
     }
   }

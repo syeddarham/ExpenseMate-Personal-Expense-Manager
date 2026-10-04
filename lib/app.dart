@@ -34,6 +34,7 @@ class ExpenseMateApp extends StatelessWidget {
               textTheme: textTheme.apply(
                 bodyColor: isDark ? Colors.white : AppColors.textPrimary,
                 displayColor: isDark ? Colors.white : AppColors.textPrimary,
+                fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial', 'sans-serif'],
               ),
               appBarTheme: const AppBarTheme(
                 backgroundColor: Colors.transparent,

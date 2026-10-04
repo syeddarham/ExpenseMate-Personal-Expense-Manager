@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/custom_button.dart';
+import '../../services/api_service.dart';
 import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
+import '../../utils/currencies_data.dart';
 import '../home/home_page.dart';
 
 /// Screen 15: 15_Select Currency
@@ -16,14 +18,24 @@ class SelectCurrencyPage extends StatefulWidget {
 
 class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
   String _selectedCode = 'USD';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
-  final List<Map<String, String>> _currencies = [
-    {'code': 'USD', 'symbol': '\$', 'name': 'US Dollar'},
-    {'code': 'EUR', 'symbol': '€', 'name': 'Euro'},
-    {'code': 'GBP', 'symbol': '£', 'name': 'British Pound'},
-    {'code': 'BDT', 'symbol': '৳', 'name': 'Bangladeshi Taka'},
-    {'code': 'INR', 'symbol': '₹', 'name': 'Indian Rupee'},
-  ];
+  final List<Map<String, String>> _currencies = AppCurrencies.all;
+
+  List<Map<String, String>> get _displayedCurrencies {
+    final q = _searchQuery.toLowerCase().trim();
+    if (q.isEmpty) return _currencies;
+    return _currencies.where((c) {
+      return c['code']!.toLowerCase().contains(q) || c['name']!.toLowerCase().contains(q);
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,15 +68,45 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                 'Choose your preferred base currency for transactions and analytics.',
                 style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
+
+              // Search Bar
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  decoration: InputDecoration(
+                    hintText: 'Search currency or code...',
+                    hintStyle: const TextStyle(fontSize: 14, color: AppColors.textMuted),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.textMuted, size: 20),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 18, color: AppColors.textMuted),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
 
               // Currency List
               Expanded(
                 child: ListView.separated(
-                  itemCount: _currencies.length,
+                  itemCount: _displayedCurrencies.length,
                   separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (context, index) {
-                    final curr = _currencies[index];
+                    final curr = _displayedCurrencies[index];
                     final isSelected = _selectedCode == curr['code'];
 
                     return GestureDetector(
@@ -82,20 +124,16 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                         child: Row(
                           children: [
                             Container(
-                              width: 40,
-                              height: 40,
+                              width: 46,
+                              height: 46,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primary : AppColors.border.withAlpha(60),
-                                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                                color: isSelected ? AppColors.primary.withAlpha(25) : const Color(0xFFF3F4F6),
+                                shape: BoxShape.circle,
                               ),
                               child: Text(
-                                curr['symbol']!,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSelected ? Colors.white : AppColors.textPrimary,
-                                ),
+                                curr['flag'] ?? '🌐',
+                                style: const TextStyle(fontSize: 26),
                               ),
                             ),
                             const SizedBox(width: AppSpacing.md),
@@ -103,14 +141,35 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    curr['code']!,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                                      color: AppColors.textPrimary,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        curr['code']!,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: isSelected ? AppColors.primary : const Color(0xFFE5E7EB),
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          curr['symbol'] ?? '',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                  const SizedBox(height: 2),
                                   Text(
                                     curr['name']!,
                                     style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
@@ -135,7 +194,14 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                 label: 'Get Started',
                 onPressed: () {
                   final chosen = _currencies.firstWhere((c) => c['code'] == _selectedCode);
-                  expenseState.setCurrency(chosen['symbol']!);
+                  expenseState.setCurrency(chosen['symbol']!, chosen['code']!);
+                  if (ApiService.hasToken) {
+                    ApiService.updateMe(
+                      country: widget.country,
+                      currencyCode: chosen['code'],
+                      currencySymbol: chosen['symbol'],
+                    );
+                  }
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (_) => const HomePage()),

@@ -29,13 +29,19 @@ class FinancialTransaction {
 
   factory FinancialTransaction.fromJson(Map<String, dynamic> json) {
     return FinancialTransaction(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      amount: (json['amount'] as num).toDouble(),
+      id: json['id'].toString(),
+      title: json['title'] as String? ?? 'Untitled',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       type: json['type'] == 'income' ? TransactionType.income : TransactionType.expense,
-      category: TransactionCategory.fromJson(json['category'] as Map<String, dynamic>),
-      date: DateTime.parse(json['date'] as String),
-      account: json['account'] as String? ?? 'Cash',
+      category: json['category'] is Map<String, dynamic>
+          ? TransactionCategory.fromJson(json['category'] as Map<String, dynamic>)
+          : TransactionCategory.defaultCategories.first,
+      date: json['date'] != null
+          ? (DateTime.tryParse(json['date'] as String) ?? DateTime.now())
+          : (json['transaction_date'] != null
+              ? (DateTime.tryParse(json['transaction_date'] as String) ?? DateTime.now())
+              : DateTime.now()),
+      account: json['account'] as String? ?? json['account_name'] as String? ?? 'Cash',
       note: json['note'] as String?,
       receiptUrl: json['receipt_url'] as String?,
     );
@@ -47,6 +53,7 @@ class FinancialTransaction {
       'title': title,
       'amount': amount,
       'type': type == TransactionType.income ? 'income' : 'expense',
+      'category_id': category.id,
       'category': category.toJson(),
       'date': date.toIso8601String(),
       'account': account,

@@ -24,12 +24,16 @@ class Budget {
 
   factory Budget.fromJson(Map<String, dynamic> json) {
     return Budget(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      limitAmount: (json['limit_amount'] as num).toDouble(),
-      spentAmount: (json['spent_amount'] as num).toDouble(),
-      category: TransactionCategory.fromJson(json['category'] as Map<String, dynamic>),
-      month: DateTime.parse(json['month'] as String),
+      id: json['id'].toString(),
+      title: json['title'] as String? ?? 'Budget',
+      limitAmount: (json['limit_amount'] as num?)?.toDouble() ?? 0.0,
+      spentAmount: (json['spent_amount'] as num?)?.toDouble() ?? 0.0,
+      category: json['category'] is Map<String, dynamic>
+          ? TransactionCategory.fromJson(json['category'] as Map<String, dynamic>)
+          : TransactionCategory.defaultCategories.first,
+      month: json['month'] != null
+          ? (DateTime.tryParse(json['month'] as String) ?? DateTime.now())
+          : DateTime.now(),
     );
   }
 

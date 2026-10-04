@@ -1,33 +1,62 @@
 import 'package:flutter/material.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
+import '../../services/api_service.dart';
 import '../../utils/constants.dart';
 import 'password_reset_success_page.dart';
 
 /// Screen 11 & 12: 11_Reset Password Empty / 12_Reset Password Filled
 class ResetPasswordPage extends StatefulWidget {
   final String email;
-  const ResetPasswordPage({super.key, this.email = ''});
+  final String? debugCode;
+
+  const ResetPasswordPage({
+    super.key,
+    this.email = '',
+    this.debugCode,
+  });
 
   @override
   State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final _codeController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.debugCode != null && widget.debugCode!.isNotEmpty) {
+      _codeController.text = widget.debugCode!;
+    }
+  }
 
   @override
   void dispose() {
+    _codeController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _handleReset() {
+  Future<void> _handleReset() async {
+    final code = _codeController.text.trim();
+    if (code.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter 6-digit reset code'),
+          backgroundColor: AppColors.expense,
+        ),
+      );
+      return;
+    }
+
     if (_passwordController.text.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -38,10 +67,38 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       return;
     }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const PasswordResetSuccessPage()),
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match'),
+          backgroundColor: AppColors.expense,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final result = await ApiService.resetPassword(
+      email: widget.email,
+      code: code,
+      newPassword: _passwordController.text,
     );
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+    if (result['success'] == true) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const PasswordResetSuccessPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error'] as String? ?? 'Password reset failed'),
+          backgroundColor: AppColors.expense,
+        ),
+      );
+    }
   }
 
   @override
@@ -75,11 +132,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
               ),
               const SizedBox(height: AppSpacing.xs),
-              const Text(
-                'Your new password should be different from your previous password.',
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
+              Text(
+                'Enter the 6-digit code sent to ${widget.email} and choose a new password.',
+                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.xl),
+
+              // 6-digit OTP code
+              CustomTextField(
+                label: 'Verification Code',
+                hint: '6-digit code',
+                controller: _codeController,
+                keyboardType: TextInputType.number,
+                prefixIcon: const Icon(Icons.security, color: AppColors.textMuted),
+              ),
+              const SizedBox(height: AppSpacing.md),
 
               // Password
               CustomTextField(
@@ -139,6 +206,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               // Reset Password Button
               CustomButton(
                 label: 'Reset Password',
+                isLoading: _isLoading,
                 onPressed: _handleReset,
               ),
             ],

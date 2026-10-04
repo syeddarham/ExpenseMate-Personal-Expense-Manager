@@ -3,6 +3,7 @@ import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../services/auth_service.dart';
 import '../../utils/constants.dart';
+import '../auth/sign_up_page.dart';
 import '../home/home_page.dart';
 
 /// Screen 01: Authentication & Login
@@ -31,21 +32,22 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    final success = await AuthService().login(
+    final result = await AuthService().login(
       _emailController.text.trim(),
       _passwordController.text,
     );
     setState(() => _isLoading = false);
 
-    if (success && mounted) {
+    if (!mounted) return;
+    if (result['success'] == true) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
       );
-    } else if (mounted) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid credentials. Password must be at least 6 characters.'),
+        SnackBar(
+          content: Text(result['error'] as String? ?? 'Invalid credentials'),
           backgroundColor: AppColors.expense,
         ),
       );
@@ -180,21 +182,6 @@ class _LoginPageState extends State<LoginPage> {
                     isLoading: _isLoading,
                     onPressed: _handleLogin,
                   ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Biometric or Guest option
-                  CustomButton(
-                    label: 'Quick Demo Access',
-                    isOutlined: true,
-                    icon: Icons.fingerprint,
-                    onPressed: () {
-                      AuthService().login('demo@expensemate.com', 'demo123');
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const HomePage()),
-                      );
-                    },
-                  ),
                   const SizedBox(height: AppSpacing.xl),
 
                   // Sign up prompt
@@ -206,7 +193,12 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SignUpPage()),
+                          );
+                        },
                         child: const Text(
                           'Sign Up',
                           style: TextStyle(

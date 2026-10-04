@@ -1,9 +1,12 @@
 import 'package:intl/intl.dart';
 
 class AppHelpers {
+  static String currentCurrencySymbol = '\$';
+
   /// Format a double amount into currency string e.g. "$1,250.00"
-  static String formatCurrency(double amount, {String symbol = '\$'}) {
-    final formatter = NumberFormat.currency(symbol: symbol, decimalDigits: 2);
+  static String formatCurrency(double amount, {String? symbol}) {
+    final sym = symbol ?? currentCurrencySymbol;
+    final formatter = NumberFormat.currency(symbol: sym, decimalDigits: 2);
     return formatter.format(amount);
   }
 

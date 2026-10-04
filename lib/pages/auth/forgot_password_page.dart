@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
+import '../../services/api_service.dart';
 import '../../utils/constants.dart';
 import 'reset_password_page.dart';
 
@@ -14,6 +15,7 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -21,13 +23,37 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
-  void _handleSendLink() {
-    if (_emailController.text.trim().isEmpty) return;
+  Future<void> _handleSendLink() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your email address'),
+          backgroundColor: AppColors.expense,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final result = await ApiService.forgotPassword(email);
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result['message'] as String? ?? 'Reset code sent to your email'),
+        backgroundColor: AppColors.primary,
+      ),
+    );
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => ResetPasswordPage(email: _emailController.text),
+        builder: (_) => ResetPasswordPage(
+          email: email,
+          debugCode: result['debug_code'] as String?,
+        ),
       ),
     );
   }
@@ -59,7 +85,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               ),
               const SizedBox(height: AppSpacing.xs),
               const Text(
-                "No worries. Enter your email address and we'll send you a link to reset your password.",
+                "No worries. Enter your email address and we'll send you a code to reset your password.",
                 style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -77,6 +103,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               // Send Reset Link Button
               CustomButton(
                 label: 'Send Reset Link',
+                isLoading: _isLoading,
                 onPressed: _handleSendLink,
               ),
             ],

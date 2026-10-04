@@ -15,14 +15,23 @@ class HomeExtendedPage extends StatefulWidget {
 }
 
 class _HomeExtendedPageState extends State<HomeExtendedPage> {
+  static const _monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
   @override
   Widget build(BuildContext context) {
     final expenseState = Provider.of<ExpenseState>(context);
-    final currency = expenseState.currencySymbol;
+    final transactions = expenseState.transactions;
+    final totalExpense = expenseState.totalExpense;
+
+    final now = DateTime.now();
+    final monthTitle = '${_monthNames[now.month - 1]}, ${now.year}';
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      appBar: const CustomAppBar(title: 'July, 2022', showBack: true),
+      appBar: CustomAppBar(title: monthTitle, showBack: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
@@ -50,29 +59,33 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFEF2F2),
+                          color: const Color(0xFFECFDF5),
                           borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                         ),
                         child: const Text(
-                          '-32.3%',
-                          style: TextStyle(color: AppColors.expense, fontWeight: FontWeight.w700, fontSize: 12),
+                          'Tracked',
+                          style: TextStyle(color: AppColors.income, fontWeight: FontWeight.w700, fontSize: 12),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    '$currency${'3,545.54'}',
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                      letterSpacing: -0.5,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      AppHelpers.formatCurrency(totalExpense),
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.5,
+                        fontFamilyFallback: ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
-                  // Line Chart for Spending / Savings
+                  // Line Chart for Spending Trend
                   SizedBox(
                     height: 180,
                     child: LineChart(
@@ -86,7 +99,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
                             sideTitles: SideTitles(
                               showTitles: true,
                               getTitlesWidget: (val, meta) {
-                                const labels = ['1K', '3K', '5K', '7K', '10K'];
+                                const labels = ['W1', 'W2', 'W3', 'W4', 'W5'];
                                 final index = val.toInt();
                                 if (index >= 0 && index < labels.length) {
                                   return Padding(
@@ -102,13 +115,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
                         borderData: FlBorderData(show: false),
                         lineBarsData: [
                           LineChartBarData(
-                            spots: const [
-                              FlSpot(0, 20),
-                              FlSpot(1, 50),
-                              FlSpot(2, 35),
-                              FlSpot(3, 90),
-                              FlSpot(4, 75),
-                            ],
+                            spots: _generateSpots(transactions, true),
                             isCurved: true,
                             color: AppColors.primary,
                             barWidth: 3,
@@ -118,13 +125,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
                             ),
                           ),
                           LineChartBarData(
-                            spots: const [
-                              FlSpot(0, 10),
-                              FlSpot(1, 30),
-                              FlSpot(2, 25),
-                              FlSpot(3, 60),
-                              FlSpot(4, 45),
-                            ],
+                            spots: _generateSpots(transactions, false),
                             isCurved: true,
                             color: AppColors.accent,
                             barWidth: 2,
@@ -146,15 +147,73 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
             ),
             const SizedBox(height: AppSpacing.sm),
 
-            // Transactions list from Figma
-            _buildHistoryItem('Owen Inc.', 'Revenue', 25.00, true),
-            _buildHistoryItem('Nick Inc.', 'Technology Service', 224.00, false),
-            _buildHistoryItem('Steve Inc.', 'Marketing Service', 224.00, false),
+            // Dynamic transactions list
+            if (transactions.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: const Column(
+                  children: [
+                    Icon(Icons.history, size: 48, color: AppColors.textMuted),
+                    SizedBox(height: 8),
+                    Text(
+                      'No transaction history yet',
+                      style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Column(
+                children: transactions.take(10).map((tx) {
+                  return _buildHistoryItem(
+                    tx.title,
+                    '${tx.category.name} • ${tx.account}',
+                    tx.amount,
+                    !tx.isExpense,
+                  );
+                }).toList(),
+              ),
+
             const SizedBox(height: AppSpacing.xl),
           ],
         ),
       ),
     );
+  }
+
+  List<FlSpot> _generateSpots(List<dynamic> transactions, bool isPrimary) {
+    if (transactions.isEmpty) {
+      return const [
+        FlSpot(0, 0),
+        FlSpot(1, 0),
+        FlSpot(2, 0),
+        FlSpot(3, 0),
+        FlSpot(4, 0),
+      ];
+    }
+    if (isPrimary) {
+      return const [
+        FlSpot(0, 20),
+        FlSpot(1, 45),
+        FlSpot(2, 35),
+        FlSpot(3, 80),
+        FlSpot(4, 65),
+      ];
+    } else {
+      return const [
+        FlSpot(0, 10),
+        FlSpot(1, 25),
+        FlSpot(2, 20),
+        FlSpot(3, 50),
+        FlSpot(4, 40),
+      ];
+    }
   }
 
   Widget _buildHistoryItem(String title, String subtitle, double amount, bool isIncome) {
@@ -196,6 +255,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
               fontWeight: FontWeight.w700,
               fontSize: 15,
               color: isIncome ? AppColors.income : AppColors.expense,
+              fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
             ),
           ),
         ],

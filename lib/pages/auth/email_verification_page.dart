@@ -1,15 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../components/custom_button.dart';
+import '../../services/api_service.dart';
+import '../../services/auth_service.dart';
+import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import '../onboarding/citizenship_page.dart';
 
 /// Screen 08 & 09: 08_Email Verification / 09_Email Verification Filled
 class EmailVerificationPage extends StatefulWidget {
   final String email;
+  final String? debugCode;
+
   const EmailVerificationPage({
     super.key,
     this.email = '',
+    this.debugCode,
   });
 
   @override
@@ -24,10 +31,24 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
   int _secondsRemaining = 56;
   Timer? _timer;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _startTimer();
+
+    // Auto-fill debug code if available in development mode
+    if (widget.debugCode != null && widget.debugCode!.length == 6) {
+      for (int i = 0; i < 6; i++) {
+        _otpControllers[i].text = widget.debugCode![i];
+      }
+    }
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _secondsRemaining = 56;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsRemaining > 0) {
         setState(() => _secondsRemaining--);
@@ -46,8 +67,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     super.dispose();
   }
 
-  void _handleVerify() {
-    final code = _otpControllers.map((c) => c.text).join();
+  Future<void> _handleVerify() async {
+    final code = _otpControllers.map((c) => c.text.trim()).join();
     if (code.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -58,10 +79,48 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       return;
     }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const CitizenshipPage()),
+    setState(() => _isLoading = true);
+    final result = await AuthService().verifyEmail(
+      email: widget.email,
+      code: code,
     );
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+    if (result['success'] == true) {
+      Provider.of<ExpenseState>(context, listen: false).loadInitialData();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const CitizenshipPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error'] as String? ?? 'Verification failed'),
+          backgroundColor: AppColors.expense,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleResend() async {
+    final result = await ApiService.resendCode(email: widget.email);
+    if (!mounted) return;
+    if (result['debug_code'] != null) {
+      final dbg = result['debug_code'].toString();
+      if (dbg.length == 6) {
+        for (int i = 0; i < 6; i++) {
+          _otpControllers[i].text = dbg[i];
+        }
+      }
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result['message'] as String? ?? 'Code resent'),
+        backgroundColor: AppColors.primary,
+      ),
+    );
+    _startTimer();
   }
 
   @override
@@ -79,7 +138,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -99,7 +158,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
               // 6 OTP Digit Input Boxes
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(6, (index) {
                   return SizedBox(
                     width: 48,
@@ -109,12 +168,13 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       maxLength: 1,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         counterText: '',
                         filled: true,
-                        fillColor: AppColors.background,
-                        border: OutlineInputBorder(
+                        fillColor: const Color(0xFFF9FAFB),
+                        contentPadding: EdgeInsets.zero,
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                           borderSide: const BorderSide(color: AppColors.border),
                         ),
@@ -144,9 +204,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                 )
               else
                 TextButton(
-                  onPressed: () {
-                    setState(() => _secondsRemaining = 56);
-                  },
+                  onPressed: _handleResend,
                   child: const Text(
                     'Resend Code',
                     style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
@@ -157,6 +215,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               // Verify Email Button
               CustomButton(
                 label: 'Verify Email',
+                isLoading: _isLoading,
                 onPressed: _handleVerify,
               ),
               const SizedBox(height: AppSpacing.lg),
