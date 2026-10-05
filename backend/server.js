@@ -2,6 +2,7 @@ const app = require('./src/app');
 const env = require('./src/config/env');
 const { initSchema, pool } = require('./src/config/db');
 
+// ExpenseMate Server Entry Point
 async function start() {
   try {
     if (env.autoInitDb) {

@@ -22,9 +22,30 @@ const updateMe = asyncHandler(async (req, res) => {
   const sets = [];
   const params = [];
 
-  if (b.full_name !== undefined) {
+  if (b.full_name !== undefined || b.name !== undefined) {
+    const rawName = b.full_name !== undefined ? b.full_name : b.name;
     sets.push('full_name = ?');
-    params.push(v.string(b.full_name, 'full_name', { min: 2, max: 120 }));
+    params.push(v.string(rawName, 'full_name', { min: 2, max: 120 }));
+  }
+  if (b.email !== undefined) {
+    const newEmail = v.email(b.email);
+    // Check if new email is already in use by another user
+    const [dup] = await pool.query('SELECT id FROM users WHERE email = ? AND id <> ?', [newEmail, req.user.id]);
+    if (dup.length > 0) {
+      throw new HttpError(409, 'This email address is already in use by another account', 'EMAIL_TAKEN');
+    }
+    sets.push('email = ?');
+    params.push(newEmail);
+  }
+  if (b.avatar_url !== undefined || b.avatar_data !== undefined) {
+    const avatar = b.avatar_url !== undefined ? b.avatar_url : b.avatar_data;
+    sets.push('avatar_url = ?');
+    params.push(avatar ? String(avatar) : null);
+  }
+  if (b.primary_color !== undefined) {
+    const color = v.string(b.primary_color, 'primary_color', { min: 4, max: 10 });
+    sets.push('primary_color = ?');
+    params.push(color);
   }
   if (b.country !== undefined) {
     sets.push('country = ?');

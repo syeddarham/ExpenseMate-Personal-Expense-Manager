@@ -9,6 +9,7 @@ function userToJson(row) {
     country: row.country,
     preferred_currency: row.currency_code,
     currency_symbol: row.currency_symbol,
+    primary_color: row.primary_color || '#059669',
     dark_mode: !!row.dark_mode,
     biometric_enabled: !!row.biometric_enabled,
     email_verified: !!row.email_verified,

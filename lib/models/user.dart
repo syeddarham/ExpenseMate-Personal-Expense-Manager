@@ -7,6 +7,8 @@ class User {
   final String? currencySymbol;
   final String? country;
   final bool emailVerified;
+  final bool darkMode;
+  final String primaryColor;
 
   User({
     required this.id,
@@ -17,6 +19,8 @@ class User {
     this.currencySymbol = '\$',
     this.country,
     this.emailVerified = false,
+    this.darkMode = false,
+    this.primaryColor = '#059669',
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -31,6 +35,10 @@ class User {
       emailVerified: json['email_verified'] is bool
           ? (json['email_verified'] as bool)
           : (json['email_verified'] == 1 || json['email_verified'] == '1'),
+      darkMode: json['dark_mode'] is bool
+          ? (json['dark_mode'] as bool)
+          : (json['dark_mode'] == 1 || json['dark_mode'] == '1'),
+      primaryColor: json['primary_color'] as String? ?? '#059669',
     );
   }
 
@@ -44,6 +52,8 @@ class User {
       'currency_symbol': currencySymbol,
       'country': country,
       'email_verified': emailVerified,
+      'dark_mode': darkMode,
+      'primary_color': primaryColor,
     };
   }
 }

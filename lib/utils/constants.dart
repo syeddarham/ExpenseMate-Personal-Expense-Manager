@@ -2,10 +2,49 @@ import 'package:flutter/material.dart';
 
 /// App-wide design constants and theme tokens
 class AppColors {
-  // Brand colors
-  static const Color primary = Color(0xFF10B981); // Emerald / Fresh Finance Green
-  static const Color primaryDark = Color(0xFF059669);
-  static const Color primaryLight = Color(0xFFD1FAE5);
+  // Brand colors (dynamically changeable by user in Settings)
+  static Color _primary = const Color(0xFF059669);
+  static Color get primary => _primary;
+  static Color _primaryDark = const Color(0xFF047857);
+  static Color get primaryDark => _primaryDark;
+  static Color _primaryLight = const Color(0xFFD1FAE5);
+  static Color get primaryLight => _primaryLight;
+
+  static void setPrimary(Color c) {
+    _primary = c;
+    _primaryDark = Color.lerp(c, Colors.black, 0.25) ?? c;
+    _primaryLight = Color.lerp(c, Colors.white, 0.75) ?? c;
+  }
+
+  static const Color defaultPrimary = Color(0xFF059669);
+
+  static const List<Map<String, dynamic>> primaryPalette = [
+    {'name': 'Emerald Green', 'hex': '#059669', 'color': Color(0xFF059669)},
+    {'name': 'Royal Blue', 'hex': '#2563EB', 'color': Color(0xFF2563EB)},
+    {'name': 'Deep Violet', 'hex': '#7C3AED', 'color': Color(0xFF7C3AED)},
+    {'name': 'Sunset Orange', 'hex': '#EA580C', 'color': Color(0xFFEA580C)},
+    {'name': 'Ruby Rose', 'hex': '#E11D48', 'color': Color(0xFFE11D48)},
+    {'name': 'Teal Cyan', 'hex': '#0D9488', 'color': Color(0xFF0D9488)},
+    {'name': 'Warm Amber', 'hex': '#D97706', 'color': Color(0xFFD97706)},
+    {'name': 'Crimson Red', 'hex': '#DC2626', 'color': Color(0xFFDC2626)},
+  ];
+
+  static Color parseHex(String hex, [Color fallback = defaultPrimary]) {
+    try {
+      final clean = hex.replaceAll('#', '').trim();
+      if (clean.length == 6) {
+        return Color(int.parse('0xFF$clean'));
+      } else if (clean.length == 8) {
+        return Color(int.parse('0x$clean'));
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
+  static String toHex(Color c) {
+    return '#${(c.toARGB32() & 0x00FFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+  }
+
   static const Color accent = Color(0xFF6366F1); // Indigo Accent
 
   // Financial indicators

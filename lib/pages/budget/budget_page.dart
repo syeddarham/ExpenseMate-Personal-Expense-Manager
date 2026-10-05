@@ -79,7 +79,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     label: 'Monthly Limit Amount',
                     controller: controller,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    prefixIcon: const Icon(Icons.attach_money, color: AppColors.primary),
+                    prefixIcon: Icon(Icons.attach_money, color: AppColors.primary),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   CustomButton(
@@ -240,7 +240,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     hint: 'e.g. 500',
                     controller: controller,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    prefixIcon: const Icon(Icons.attach_money, color: AppColors.primary),
+                    prefixIcon: Icon(Icons.attach_money, color: AppColors.primary),
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
@@ -299,7 +299,7 @@ class _BudgetPageState extends State<BudgetPage> {
         title: 'Monthly Budget',
         actions: [
           IconButton(
-            icon: const Icon(Icons.category_outlined, color: AppColors.primary),
+            icon: Icon(Icons.category_outlined, color: AppColors.primary),
             tooltip: 'Manage Categories',
             onPressed: () => Navigator.push(
               context,
@@ -309,6 +309,7 @@ class _BudgetPageState extends State<BudgetPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'budget_page_fab',
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         onPressed: () => _showSetCategoryBudgetModal(context),
@@ -324,7 +325,7 @@ class _BudgetPageState extends State<BudgetPage> {
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [AppColors.primaryDark, AppColors.primary],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,

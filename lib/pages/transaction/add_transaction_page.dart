@@ -119,7 +119,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       label: 'Category Name',
                       hint: 'e.g. Subscriptions, Groceries, Bonus',
                       controller: nameController,
-                      prefixIcon: const Icon(Icons.label_outline, color: AppColors.primary),
+                      prefixIcon: Icon(Icons.label_outline, color: AppColors.primary),
                       onChanged: (_) => setModalState(() {}),
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -328,7 +328,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     context,
                     MaterialPageRoute(builder: (_) => const CategoriesPage()),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Manage Categories',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
                   ),
@@ -386,11 +386,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     style: BorderStyle.solid,
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
-                    SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: AppSpacing.sm),
                     Text(
                       'Add Receipt / Invoice Attachment',
                       style: TextStyle(
@@ -548,11 +548,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   color: AppColors.primary.withAlpha(120),
                 ),
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.add_circle_outline, color: AppColors.primary, size: 24),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
                     'Add New',
                     textAlign: TextAlign.center,

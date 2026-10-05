@@ -233,6 +233,9 @@ class ApiService {
 
   static Future<User?> updateMe({
     String? fullName,
+    String? email,
+    String? avatarUrl,
+    String? primaryColor,
     String? country,
     String? currencyCode,
     String? currencySymbol,
@@ -241,6 +244,9 @@ class ApiService {
     try {
       final payload = <String, dynamic>{};
       if (fullName != null) payload['full_name'] = fullName;
+      if (email != null) payload['email'] = email;
+      if (avatarUrl != null) payload['avatar_url'] = avatarUrl;
+      if (primaryColor != null) payload['primary_color'] = primaryColor;
       if (country != null) payload['country'] = country;
       if (currencyCode != null) payload['currency_code'] = currencyCode;
       if (currencySymbol != null) payload['currency_symbol'] = currencySymbol;
@@ -257,6 +263,57 @@ class ApiService {
       }
     } catch (_) {}
     return null;
+  }
+
+  static Future<Map<String, dynamic>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final res = await http.put(
+        Uri.parse('$baseUrl/users/me/password'),
+        headers: _headers,
+        body: jsonEncode({
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        }),
+      );
+      final body = jsonDecode(res.body);
+      return {
+        'success': res.statusCode == 200,
+        'message': body['message'] ?? (res.statusCode == 200 ? 'Password updated' : 'Update failed'),
+        'error': body['error']?['message'] ?? body['message'],
+      };
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> exportTransactions({
+    String format = 'csv',
+    bool sendEmail = true,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse('$baseUrl/transactions/export'),
+        headers: _headers,
+        body: jsonEncode({
+          'format': format,
+          'send_email': sendEmail,
+        }),
+      );
+      final body = jsonDecode(res.body);
+      return {
+        'success': res.statusCode == 200,
+        'message': body['message'] ?? 'Export generated',
+        'emailSent': body['emailSent'] == true,
+        'filename': body['filename'],
+        'base64': body['base64'],
+        'recordCount': body['recordCount'],
+      };
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: $e'};
+    }
   }
 
   static Future<bool> convertCurrency({

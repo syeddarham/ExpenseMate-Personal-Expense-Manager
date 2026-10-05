@@ -174,7 +174,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               const Text('Spending Distribution', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
               Text(
                 'Total: ${AppHelpers.formatCurrency(totalExpense)}',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primaryDark),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primaryDark),
               ),
             ],
           ),

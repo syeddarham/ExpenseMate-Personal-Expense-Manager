@@ -18,7 +18,7 @@ async function budgetsForMonth(userId, monthStart) {
                        WHERE t.user_id = ? AND t.category_id = c.id AND t.type = 'expense'
                          AND t.transaction_date >= ? AND t.transaction_date < ?), 0) AS spent_amount
        FROM categories c
-      WHERE c.is_expense = 1 AND (c.user_id IS NULL OR c.user_id = ?)
+      WHERE c.is_expense = 1 AND c.user_id = ?
       ORDER BY c.id`,
     [userId, toSqlDate(monthStart), userId, monthStart, next, userId],
   );
@@ -53,7 +53,7 @@ const setBudget = asyncHandler(async (req, res) => {
   v.assert();
 
   const [cats] = await pool.query(
-    'SELECT id FROM categories WHERE id = ? AND is_expense = 1 AND (user_id IS NULL OR user_id = ?)',
+    'SELECT id FROM categories WHERE id = ? AND is_expense = 1 AND user_id = ?',
     [categoryId, req.user.id],
   );
   if (cats.length === 0) throw new HttpError(404, 'Expense category not found', 'NOT_FOUND');

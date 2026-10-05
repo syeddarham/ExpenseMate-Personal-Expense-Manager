@@ -141,7 +141,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       label: 'Category Name',
                       hint: 'e.g., Coffee, Pet Care, Freelance',
                       controller: nameController,
-                      prefixIcon: const Icon(Icons.edit_outlined, color: AppColors.primary),
+                      prefixIcon: Icon(Icons.edit_outlined, color: AppColors.primary),
                       onChanged: (_) => setModalState(() {}),
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -453,13 +453,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
         title: 'Manage Categories',
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_circle, color: AppColors.primary, size: 28),
+            icon: Icon(Icons.add_circle, color: AppColors.primary, size: 28),
             tooltip: 'Add Category',
             onPressed: () => _showCategoryDialog(),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'categories_page_fab',
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         onPressed: () => _showCategoryDialog(),
@@ -493,7 +494,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                      borderSide: BorderSide(color: AppColors.primary, width: 1.5),
                     ),
                   ),
                 ),
@@ -606,7 +607,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                             color: AppColors.primaryLight,
                                             borderRadius: BorderRadius.circular(4),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             'Budgeted',
                                             style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
                                           ),

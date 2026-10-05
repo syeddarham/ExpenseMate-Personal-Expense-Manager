@@ -178,7 +178,7 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                               ),
                             ),
                             if (isSelected)
-                              const Icon(Icons.check_circle, color: AppColors.primary, size: 20)
+                              Icon(Icons.check_circle, color: AppColors.primary, size: 20)
                             else
                               const Icon(Icons.radio_button_unchecked, color: AppColors.border, size: 20),
                           ],
@@ -192,21 +192,24 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
               // Get Started Button
               CustomButton(
                 label: 'Get Started',
-                onPressed: () {
+                onPressed: () async {
                   final chosen = _currencies.firstWhere((c) => c['code'] == _selectedCode);
                   expenseState.setCurrency(chosen['symbol']!, chosen['code']!);
                   if (ApiService.hasToken) {
-                    ApiService.updateMe(
+                    await ApiService.updateMe(
                       country: widget.country,
                       currencyCode: chosen['code'],
                       currencySymbol: chosen['symbol'],
                     );
+                    await expenseState.loadInitialData();
                   }
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomePage()),
-                    (route) => false,
-                  );
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomePage()),
+                      (route) => false,
+                    );
+                  }
                 },
               ),
             ],

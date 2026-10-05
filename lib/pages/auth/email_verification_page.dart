@@ -88,7 +88,10 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
     if (!mounted) return;
     if (result['success'] == true) {
-      Provider.of<ExpenseState>(context, listen: false).loadInitialData();
+      final expenseState = Provider.of<ExpenseState>(context, listen: false);
+      expenseState.clear();
+      await expenseState.loadInitialData();
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const CitizenshipPage()),
@@ -106,14 +109,6 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   Future<void> _handleResend() async {
     final result = await ApiService.resendCode(email: widget.email);
     if (!mounted) return;
-    if (result['debug_code'] != null) {
-      final dbg = result['debug_code'].toString();
-      if (dbg.length == 6) {
-        for (int i = 0; i < 6; i++) {
-          _otpControllers[i].text = dbg[i];
-        }
-      }
-    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(result['message'] as String? ?? 'Code resent'),
@@ -180,7 +175,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                          borderSide: BorderSide(color: AppColors.primary, width: 2),
                         ),
                       ),
                       onChanged: (val) {
@@ -205,7 +200,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               else
                 TextButton(
                   onPressed: _handleResend,
-                  child: const Text(
+                  child: Text(
                     'Resend Code',
                     style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
                   ),

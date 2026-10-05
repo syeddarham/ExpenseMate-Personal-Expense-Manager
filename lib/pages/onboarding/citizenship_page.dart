@@ -135,7 +135,7 @@ class _CitizenshipPageState extends State<CitizenshipPage> {
                               ),
                             ),
                             if (isSelected)
-                              const Icon(Icons.check_circle, color: AppColors.primary, size: 20)
+                              Icon(Icons.check_circle, color: AppColors.primary, size: 20)
                             else
                               const Icon(Icons.radio_button_unchecked, color: AppColors.border, size: 20),
                           ],

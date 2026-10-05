@@ -27,7 +27,7 @@ async function parseTransactionBody(body, userId) {
   const rawCat = body.category_id !== undefined ? body.category_id : (body.category ? (body.category.id || body.category.name) : null);
   if (rawCat !== null && !isNaN(Number(rawCat))) {
     const [cats] = await pool.query(
-      'SELECT id, is_expense FROM categories WHERE id = ? AND (user_id IS NULL OR user_id = ?)',
+      'SELECT id, is_expense FROM categories WHERE id = ? AND user_id = ?',
       [Number(rawCat), userId],
     );
     if (cats.length > 0) {
@@ -38,7 +38,7 @@ async function parseTransactionBody(body, userId) {
   if (!categoryId && rawCat) {
     const catStr = String(rawCat).trim().toLowerCase();
     const [cats] = await pool.query(
-      'SELECT id, is_expense FROM categories WHERE (user_id IS NULL OR user_id = ?) AND (LOWER(name) = ? OR LOWER(name) LIKE ?) ORDER BY is_expense = ? DESC LIMIT 1',
+      'SELECT id, is_expense FROM categories WHERE user_id = ? AND (LOWER(name) = ? OR LOWER(name) LIKE ?) ORDER BY is_expense = ? DESC LIMIT 1',
       [userId, catStr, `%${catStr}%`, isExpense],
     );
     if (cats.length > 0) {
@@ -48,7 +48,7 @@ async function parseTransactionBody(body, userId) {
 
   if (!categoryId) {
     const [cats] = await pool.query(
-      'SELECT id FROM categories WHERE is_expense = ? AND (user_id IS NULL OR user_id = ?) ORDER BY id ASC LIMIT 1',
+      'SELECT id FROM categories WHERE is_expense = ? AND user_id = ? ORDER BY id ASC LIMIT 1',
       [isExpense, userId],
     );
     if (cats.length > 0) {
@@ -183,4 +183,31 @@ const deleteTransaction = asyncHandler(async (req, res) => {
   res.json({ message: 'Transaction deleted' });
 });
 
-module.exports = { listTransactions, getTransaction, createTransaction, updateTransaction, deleteTransaction };
+/** POST /api/transactions/export  { format: 'csv'|'pdf', send_email: boolean } */
+const exportTransactions = asyncHandler(async (req, res) => {
+  const { exportUserTransactions } = require('../services/export.service');
+  const format = (req.body.format || req.query.format || 'csv').toString().toLowerCase();
+  const sendEmail = req.body.send_email !== false;
+
+  const result = await exportUserTransactions(req.user.id, {
+    format,
+    sendEmail,
+  });
+
+  res.json({
+    message: result.emailSent
+      ? `Export successfully generated and sent to ${result.email}!`
+      : `Export successfully generated (${result.filename})`,
+    ...result,
+  });
+});
+
+module.exports = {
+  listTransactions,
+  getTransaction,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction,
+  exportTransactions,
+};
+

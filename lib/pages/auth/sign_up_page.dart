@@ -215,7 +215,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Text(
+                      child: Text(
                         'Sign In',
                         style: TextStyle(
                           color: AppColors.primary,

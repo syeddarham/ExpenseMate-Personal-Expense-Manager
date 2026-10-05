@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../services/auth_service.dart';
+import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import '../auth/sign_up_page.dart';
 import '../home/home_page.dart';
@@ -40,6 +42,10 @@ class _LoginPageState extends State<LoginPage> {
 
     if (!mounted) return;
     if (result['success'] == true) {
+      final expenseState = Provider.of<ExpenseState>(context, listen: false);
+      expenseState.clear();
+      await expenseState.loadInitialData();
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
@@ -74,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                       width: 72,
                       height: 72,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           colors: [AppColors.primary, AppColors.primaryDark],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -164,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {},
-                      child: const Text(
+                      child: Text(
                         'Forgot Password?',
                         style: TextStyle(
                           fontSize: 13,
@@ -199,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                             MaterialPageRoute(builder: (_) => const SignUpPage()),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'Sign Up',
                           style: TextStyle(
                             color: AppColors.primary,

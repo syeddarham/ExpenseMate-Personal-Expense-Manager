@@ -27,7 +27,7 @@ class PasswordResetSuccessPage extends StatelessWidget {
                     color: AppColors.primaryLight,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.check_circle_rounded,
                     color: AppColors.primary,
                     size: 54,

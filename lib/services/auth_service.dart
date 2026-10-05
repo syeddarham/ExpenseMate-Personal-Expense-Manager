@@ -11,6 +11,10 @@ class AuthService extends ChangeNotifier {
   bool _isAuthenticated = false;
 
   User? get currentUser => _currentUser;
+  set currentUser(User? u) {
+    _currentUser = u;
+    notifyListeners();
+  }
   bool get isAuthenticated => _isAuthenticated;
 
   void setUser(User user, [String? token]) {

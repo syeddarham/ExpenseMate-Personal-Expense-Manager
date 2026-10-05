@@ -111,4 +111,20 @@ class AppCurrencies {
     {'code': 'VES', 'symbol': 'Bs.S', 'name': 'Venezuelan Bolivar', 'flag': '🇻🇪'},
     {'code': 'ZMW', 'symbol': 'ZK', 'name': 'Zambian Kwacha', 'flag': '🇿🇲'},
   ];
+
+  static String getSymbol(String code) {
+    final match = all.firstWhere(
+      (c) => c['code']!.toUpperCase() == code.toUpperCase(),
+      orElse: () => {'symbol': '\$'},
+    );
+    return match['symbol'] ?? '\$';
+  }
+
+  static String getFlag(String code) {
+    final match = all.firstWhere(
+      (c) => c['code']!.toUpperCase() == code.toUpperCase(),
+      orElse: () => {'flag': '🌐'},
+    );
+    return match['flag'] ?? '🌐';
+  }
 }

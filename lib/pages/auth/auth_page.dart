@@ -27,7 +27,7 @@ class AuthPage extends StatelessWidget {
                     color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.account_balance_wallet_rounded,
                     color: AppColors.primaryDark,
                     size: 38,

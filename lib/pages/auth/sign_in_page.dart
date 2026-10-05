@@ -41,8 +41,11 @@ class _SignInPageState extends State<SignInPage> {
 
     if (!mounted) return;
     if (result['success'] == true) {
-      // Load user financial data into ExpenseState
-      Provider.of<ExpenseState>(context, listen: false).loadInitialData();
+      // Reset state and load the authenticated user's isolated financial data
+      final expenseState = Provider.of<ExpenseState>(context, listen: false);
+      expenseState.clear();
+      await expenseState.loadInitialData();
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
@@ -151,7 +154,7 @@ class _SignInPageState extends State<SignInPage> {
                           MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         'Forget Password?',
                         style: TextStyle(
                           fontSize: 13,
@@ -187,7 +190,7 @@ class _SignInPageState extends State<SignInPage> {
                           MaterialPageRoute(builder: (_) => const SignUpPage()),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         'Create Account',
                         style: TextStyle(
                           color: AppColors.primary,

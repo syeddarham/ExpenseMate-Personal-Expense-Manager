@@ -3,6 +3,8 @@ import '../models/account.dart';
 import '../models/budget.dart';
 import '../models/category.dart';
 import '../models/transaction.dart';
+import '../utils/constants.dart';
+import '../utils/currencies_data.dart';
 import '../utils/helpers.dart';
 import 'api_service.dart';
 
@@ -72,15 +74,19 @@ class ExpenseState extends ChangeNotifier {
         }
         if (user.currencySymbol != null && user.currencySymbol!.isNotEmpty) {
           _currencySymbol = user.currencySymbol!;
-          AppHelpers.currentCurrencySymbol = currencySymbol;
+        } else {
+          _currencySymbol = AppCurrencies.getSymbol(_currencyCode ?? 'USD');
+        }
+        AppHelpers.currentCurrencySymbol = currencySymbol;
+        _isDarkMode = user.darkMode;
+        if (user.primaryColor.isNotEmpty) {
+          AppColors.setPrimary(AppColors.parseHex(user.primaryColor));
         }
       }
 
-      // 2. Fetch categories
+      // 2. Fetch categories strictly for this user
       final cats = await ApiService.getCategories();
-      if (cats.isNotEmpty) {
-        _categories = cats;
-      }
+      _categories = cats.isNotEmpty ? cats : List.from(TransactionCategory.defaultCategories);
 
       // 3. Fetch accounts
       final accs = await ApiService.getAccounts();
@@ -479,10 +485,29 @@ class ExpenseState extends ChangeNotifier {
     return map;
   }
 
+  Color get primaryColor => AppColors.primary;
+
+  Future<void> setPrimaryColor(Color color, {bool syncBackend = true}) async {
+    AppColors.setPrimary(color);
+    notifyListeners();
+
+    if (syncBackend && ApiService.hasToken) {
+      final hex = AppColors.toHex(color);
+      await ApiService.updateMe(primaryColor: hex);
+    }
+  }
+
   void clear() {
     _transactions.clear();
     _budgets.clear();
     _accounts.clear();
+    _categories = List.from(TransactionCategory.defaultCategories);
+    _currencyCode = 'USD';
+    _currencySymbol = '\$';
+    AppHelpers.currentCurrencySymbol = '\$';
+    AppColors.setPrimary(AppColors.defaultPrimary);
+    _isDarkMode = false;
+    _isLoading = false;
     notifyListeners();
   }
 }

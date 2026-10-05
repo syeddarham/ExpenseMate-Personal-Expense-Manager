@@ -4,7 +4,7 @@
 --
 -- All SQL for the project lives in this file. It is idempotent and is
 -- executed automatically by the Node.js backend on start-up
--- (see backend/src/config/db.js) or manually with: npm run db:init
+-- (see backend/src/config/initDb.js) or manually with:  npm run db:init
 -- =====================================================================
 
 CREATE DATABASE IF NOT EXISTS expensemate_db
@@ -21,10 +21,11 @@ CREATE TABLE IF NOT EXISTS users (
   full_name           VARCHAR(120)  NOT NULL,
   email               VARCHAR(190)  NOT NULL,
   password_hash       VARCHAR(255)  NOT NULL,
-  avatar_url          VARCHAR(500)  NULL,
+  avatar_url          MEDIUMTEXT    NULL,
   country             VARCHAR(100)  NULL,
   currency_code       CHAR(3)       NOT NULL DEFAULT 'USD',
   currency_symbol     VARCHAR(10)   NOT NULL DEFAULT '$',
+  primary_color       VARCHAR(10)   NOT NULL DEFAULT '#059669',
   dark_mode           TINYINT(1)    NOT NULL DEFAULT 0,
   biometric_enabled   TINYINT(1)    NOT NULL DEFAULT 0,
   email_verified      TINYINT(1)    NOT NULL DEFAULT 0,
@@ -54,11 +55,11 @@ CREATE TABLE IF NOT EXISTS verification_codes (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- categories : predefined (user_id IS NULL) and custom (per-user)
+-- categories : strictly scoped per user account
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS categories (
   id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id     INT UNSIGNED NULL,
+  user_id     INT UNSIGNED NOT NULL,
   name        VARCHAR(80)  NOT NULL,
   icon        VARCHAR(50)  NOT NULL DEFAULT 'category',
   color       CHAR(7)      NOT NULL DEFAULT '#10B981',
@@ -110,7 +111,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   CONSTRAINT fk_tx_user FOREIGN KEY (user_id)
     REFERENCES users (id) ON DELETE CASCADE,
   CONSTRAINT fk_tx_account FOREIGN KEY (account_id)
-    REFERENCES accounts (id) ON DELETE CASCADE,
+    REFERENCES accounts (id) ON DELETE RESTRICT,
   CONSTRAINT fk_tx_category FOREIGN KEY (category_id)
     REFERENCES categories (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
@@ -135,25 +136,3 @@ CREATE TABLE IF NOT EXISTS budgets (
   CONSTRAINT fk_budgets_category FOREIGN KEY (category_id)
     REFERENCES categories (id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
--- Reference data: predefined categories (inserted only once)
--- ---------------------------------------------------------------------
-INSERT INTO categories (user_id, name, icon, color, is_expense)
-SELECT seed.user_id, seed.name, seed.icon, seed.color, seed.is_expense
-FROM (
-  SELECT NULL AS user_id, 'Food & Dining'     AS name, 'restaurant'       AS icon, '#F59E0B' AS color, 1 AS is_expense
-  UNION ALL SELECT NULL, 'Groceries',          'shopping_cart',    '#10B981', 1
-  UNION ALL SELECT NULL, 'Transport',          'directions_car',   '#3B82F6', 1
-  UNION ALL SELECT NULL, 'Bills & Utilities',  'receipt_long',     '#8B5CF6', 1
-  UNION ALL SELECT NULL, 'Entertainment',      'movie',            '#EC4899', 1
-  UNION ALL SELECT NULL, 'Health',             'medical_services', '#EF4444', 1
-  UNION ALL SELECT NULL, 'Shopping',           'shopping_bag',     '#F97316', 1
-  UNION ALL SELECT NULL, 'Education',          'school',           '#0EA5E9', 1
-  UNION ALL SELECT NULL, 'Travel',             'flight',           '#14B8A6', 1
-  UNION ALL SELECT NULL, 'Salary / Income',    'attach_money',     '#059669', 0
-  UNION ALL SELECT NULL, 'Freelance',          'work',             '#6366F1', 0
-  UNION ALL SELECT NULL, 'Investments',        'trending_up',      '#06B6D4', 0
-  UNION ALL SELECT NULL, 'Gifts',              'card_giftcard',    '#D946EF', 0
-) AS seed
-WHERE NOT EXISTS (SELECT 1 FROM categories WHERE user_id IS NULL);

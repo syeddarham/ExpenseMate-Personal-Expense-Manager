@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/transaction_card.dart';
 import '../../models/transaction.dart';
+import '../../services/auth_service.dart';
 import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import '../../utils/helpers.dart';
@@ -36,6 +38,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: _buildBottomNav(),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'home_main_fab',
         backgroundColor: AppColors.primary,
         elevation: 6,
         shape: const CircleBorder(),
@@ -214,6 +217,23 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTopHeader() {
+    final user = AuthService().currentUser;
+    final userName = user?.name.isNotEmpty == true ? user!.name : 'User';
+    final initials = userName.split(' ').where((s) => s.isNotEmpty).map((s) => s[0]).take(2).join().toUpperCase();
+    final pfp = user?.avatarUrl;
+
+    ImageProvider? avatarProvider;
+    if (pfp != null && pfp.isNotEmpty) {
+      if (pfp.startsWith('data:image')) {
+        try {
+          final base64Part = pfp.split(',').last;
+          avatarProvider = MemoryImage(base64Decode(base64Part));
+        } catch (_) {}
+      } else if (pfp.startsWith('http')) {
+        avatarProvider = NetworkImage(pfp);
+      }
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -222,20 +242,23 @@ class _HomePageState extends State<HomePage> {
             CircleAvatar(
               radius: 22,
               backgroundColor: AppColors.primaryLight,
-              child: const Text(
-                'SA',
-                style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.primaryDark),
-              ),
+              backgroundImage: avatarProvider,
+              child: avatarProvider == null
+                  ? Text(
+                      initials.isNotEmpty ? initials : 'EM',
+                      style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.primaryDark),
+                    )
+                  : null,
             ),
             const SizedBox(width: AppSpacing.sm),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Hello 👋',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  'Hello, $userName 👋',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
-                Text(
+                const Text(
                   'Welcome to ExpenseMate',
                   style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                 ),
@@ -486,7 +509,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Text(
                 '$count',
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
               ),
             ),
           ],

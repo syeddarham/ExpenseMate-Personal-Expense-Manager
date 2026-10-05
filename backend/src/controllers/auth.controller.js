@@ -68,11 +68,10 @@ const register = asyncHandler(async (req, res) => {
     }
   }
 
-  const code = await issueCode(user, 'email_verification');
+  await issueCode(user, 'email_verification');
   res.status(201).json({
     message: 'Account created. A verification code has been sent to your email.',
     email,
-    debug_code: code,
   });
 });
 
@@ -137,10 +136,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
   v.assert();
 
   const user = await findUserByEmail(email);
-  let debugCode = null;
   if (user) {
     try {
-      debugCode = await issueCode(user, 'password_reset');
+      await issueCode(user, 'password_reset');
     } catch (err) {
       if (err.status !== 429) throw err;
     }
@@ -148,7 +146,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
   // Same response whether or not the account exists (prevents user enumeration)
   res.json({
     message: 'If an account exists for this email, a reset code has been sent.',
-    debug_code: debugCode,
   });
 });
 

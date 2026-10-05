@@ -7,6 +7,7 @@ router.use(requireAuth);
 
 router.get('/', transactionController.listTransactions);
 router.post('/', transactionController.createTransaction);
+router.post('/export', transactionController.exportTransactions);
 router.get('/:id', transactionController.getTransaction);
 router.put('/:id', transactionController.updateTransaction);
 router.delete('/:id', transactionController.deleteTransaction);

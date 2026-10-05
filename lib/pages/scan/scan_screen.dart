@@ -45,22 +45,22 @@ class _ScanScreenState extends State<ScanScreen> {
                   Positioned(
                     top: 12,
                     left: 12,
-                    child: Container(width: 24, height: 24, decoration: const BoxDecoration(border: Border(top: BorderSide(color: AppColors.primary, width: 4), left: BorderSide(color: AppColors.primary, width: 4)))),
+                    child: Container(width: 24, height: 24, decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.primary, width: 4), left: BorderSide(color: AppColors.primary, width: 4)))),
                   ),
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: Container(width: 24, height: 24, decoration: const BoxDecoration(border: Border(top: BorderSide(color: AppColors.primary, width: 4), right: BorderSide(color: AppColors.primary, width: 4)))),
+                    child: Container(width: 24, height: 24, decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.primary, width: 4), right: BorderSide(color: AppColors.primary, width: 4)))),
                   ),
                   Positioned(
                     bottom: 12,
                     left: 12,
-                    child: Container(width: 24, height: 24, decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.primary, width: 4), left: BorderSide(color: AppColors.primary, width: 4)))),
+                    child: Container(width: 24, height: 24, decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.primary, width: 4), left: BorderSide(color: AppColors.primary, width: 4)))),
                   ),
                   Positioned(
                     bottom: 12,
                     right: 12,
-                    child: Container(width: 24, height: 24, decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.primary, width: 4), right: BorderSide(color: AppColors.primary, width: 4)))),
+                    child: Container(width: 24, height: 24, decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.primary, width: 4), right: BorderSide(color: AppColors.primary, width: 4)))),
                   ),
                 ],
               ),
@@ -119,8 +119,8 @@ class _ScanScreenState extends State<ScanScreen> {
                     GestureDetector(
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Receipt scanned successfully! Extracted \$46.80 for Food & Dining.'),
+                          SnackBar(
+                            content: const Text('Receipt scanned successfully! Extracted \$46.80 for Food & Dining.'),
                             backgroundColor: AppColors.primary,
                           ),
                         );
