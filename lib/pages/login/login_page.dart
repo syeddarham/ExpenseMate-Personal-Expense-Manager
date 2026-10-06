@@ -46,9 +46,10 @@ class _LoginPageState extends State<LoginPage> {
       expenseState.clear();
       await expenseState.loadInitialData();
       if (!mounted) return;
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
+        (route) => false,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

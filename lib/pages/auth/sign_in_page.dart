@@ -46,9 +46,10 @@ class _SignInPageState extends State<SignInPage> {
       expenseState.clear();
       await expenseState.loadInitialData();
       if (!mounted) return;
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
+        (route) => false,
       );
     } else {
       if (result['needsVerification'] == true) {

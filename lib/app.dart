@@ -14,26 +14,36 @@ class ExpenseMateApp extends StatelessWidget {
       create: (_) => ExpenseState(),
       child: Consumer<ExpenseState>(
         builder: (context, expenseState, _) {
-          final isDark = expenseState.isDarkMode;
-          final baseTheme = isDark ? ThemeData.dark() : ThemeData.light();
-          final textTheme = GoogleFonts.interTextTheme(baseTheme.textTheme);
+          final textTheme = GoogleFonts.interTextTheme(ThemeData.light().textTheme);
 
           return MaterialApp(
             title: 'ExpenseMate',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               useMaterial3: true,
-              brightness: isDark ? Brightness.dark : Brightness.light,
-              scaffoldBackgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+              brightness: Brightness.light,
+              scaffoldBackgroundColor: AppColors.background,
               colorScheme: ColorScheme.fromSeed(
                 seedColor: AppColors.primary,
-                brightness: isDark ? Brightness.dark : Brightness.light,
+                brightness: Brightness.light,
                 primary: AppColors.primary,
-                surface: isDark ? AppColors.darkSurface : AppColors.surface,
+                surface: AppColors.surface,
+              ),
+              dialogTheme: const DialogThemeData(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.transparent,
+              ),
+              bottomSheetTheme: const BottomSheetThemeData(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.transparent,
+              ),
+              cardTheme: const CardThemeData(
+                color: Colors.white,
+                surfaceTintColor: Colors.transparent,
               ),
               textTheme: textTheme.apply(
-                bodyColor: isDark ? Colors.white : AppColors.textPrimary,
-                displayColor: isDark ? Colors.white : AppColors.textPrimary,
+                bodyColor: AppColors.textPrimary,
+                displayColor: AppColors.textPrimary,
                 fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial', 'sans-serif'],
               ),
               appBarTheme: const AppBarTheme(

@@ -16,7 +16,6 @@ class ExpenseState extends ChangeNotifier {
 
   String? _currencySymbol = '\$';
   String? _currencyCode = 'USD';
-  bool _isDarkMode = false;
   bool _isLoading = false;
 
   ExpenseState() {
@@ -38,7 +37,7 @@ class ExpenseState extends ChangeNotifier {
     if (c is String && c.isNotEmpty) return c;
     return 'USD';
   }
-  bool get isDarkMode => _isDarkMode;
+  bool get isDarkMode => false;
   bool get isLoading => _isLoading;
 
   double get totalIncome {
@@ -78,7 +77,6 @@ class ExpenseState extends ChangeNotifier {
           _currencySymbol = AppCurrencies.getSymbol(_currencyCode ?? 'USD');
         }
         AppHelpers.currentCurrencySymbol = currencySymbol;
-        _isDarkMode = user.darkMode;
         if (user.primaryColor.isNotEmpty) {
           AppColors.setPrimary(AppColors.parseHex(user.primaryColor));
         }
@@ -463,14 +461,7 @@ class ExpenseState extends ChangeNotifier {
     return true;
   }
 
-  void toggleTheme(bool value) {
-    _isDarkMode = value;
-    notifyListeners();
-
-    if (ApiService.hasToken) {
-      ApiService.updateMe(darkMode: value);
-    }
-  }
+  void toggleTheme(bool value) {}
 
   /// Get spending grouped by category for analytics
   Map<TransactionCategory, double> getCategorySpending() {
@@ -506,7 +497,6 @@ class ExpenseState extends ChangeNotifier {
     _currencySymbol = '\$';
     AppHelpers.currentCurrencySymbol = '\$';
     AppColors.setPrimary(AppColors.defaultPrimary);
-    _isDarkMode = false;
     _isLoading = false;
     notifyListeners();
   }

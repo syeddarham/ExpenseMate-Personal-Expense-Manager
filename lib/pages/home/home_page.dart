@@ -25,8 +25,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
       body: IndexedStack(
         index: _currentIndex,
         children: [
@@ -61,7 +69,8 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add, size: 28, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
+    ),
+  );
   }
 
   Widget _buildHomeDashboard(BuildContext context) {

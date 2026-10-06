@@ -24,7 +24,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool _biometricEnabled = true;
   Uint8List? _cachedPfpBytes;
   bool _isLoadingPfp = false;
 
@@ -221,45 +220,82 @@ class _ProfilePageState extends State<ProfilePage> {
         return StatefulBuilder(
           builder: (ctx, setDlgState) {
             return AlertDialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusLg)),
               title: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: AppColors.primary.withAlpha(25),
                       borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                     ),
-                    child: Icon(Icons.edit_outlined, color: AppColors.primary, size: 22),
+                    child: Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  const Text('Edit Profile', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+                  const Text(
+                    'Edit Profile',
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.textPrimary),
+                  ),
                 ],
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Full Name', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                  const Text('Full Name', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameCtrl,
+                    style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
-                      hintText: 'Your Full Name',
-                      prefixIcon: const Icon(Icons.person_outline, size: 20),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+                      filled: true,
+                      fillColor: const Color(0xFFF8FAFC),
+                      hintText: 'Your full name',
+                      hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
+                      prefixIcon: const Icon(Icons.person_outline, size: 19, color: Color(0xFF64748B)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  const Text('Email Address', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                  const Text('Email Address', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: emailCtrl,
                     keyboardType: TextInputType.emailAddress,
+                    style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color(0xFFF8FAFC),
                       hintText: 'your.email@example.com',
-                      prefixIcon: const Icon(Icons.mail_outline, size: 20),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+                      hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
+                      prefixIcon: const Icon(Icons.mail_outline, size: 19, color: Color(0xFF64748B)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                      ),
                     ),
                   ),
                 ],
@@ -296,6 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           setDlgState(() => isSaving = true);
                           final updated = await ApiService.updateMe(fullName: newName, email: newEmail);
+                          if (!dlgCtx.mounted) return;
                           setDlgState(() => isSaving = false);
 
                           if (updated != null) {
@@ -348,19 +385,21 @@ class _ProfilePageState extends State<ProfilePage> {
         return StatefulBuilder(
           builder: (ctx, setDlgState) {
             return AlertDialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusLg)),
               title: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: AppColors.primary.withAlpha(25),
                       borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                     ),
-                    child: Icon(Icons.lock_reset, color: AppColors.primary, size: 22),
+                    child: Icon(Icons.lock_reset, color: AppColors.primary, size: 20),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  const Text('Change Password', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+                  const Text('Change Password', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.textPrimary)),
                 ],
               ),
               content: SingleChildScrollView(
@@ -368,51 +407,99 @@ class _ProfilePageState extends State<ProfilePage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Current Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('Current Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: currentPassCtrl,
                       obscureText: obscureCurrent,
+                      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                       decoration: InputDecoration(
-                        hintText: 'Enter current password',
-                        prefixIcon: const Icon(Icons.lock_outline, size: 20),
+                        filled: true,
+                        fillColor: const Color(0xFFF8FAFC),
+                        hintText: 'Current password',
+                        hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
+                        prefixIcon: const Icon(Icons.lock_outline, size: 19, color: Color(0xFF64748B)),
                         suffixIcon: IconButton(
-                          icon: Icon(obscureCurrent ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20),
+                          icon: Icon(obscureCurrent ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: const Color(0xFF64748B)),
                           onPressed: () => setDlgState(() => obscureCurrent = !obscureCurrent),
                         ),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    const Text('New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: newPassCtrl,
                       obscureText: obscureNew,
+                      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                       decoration: InputDecoration(
-                        hintText: 'At least 6 characters',
-                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 20),
+                        filled: true,
+                        fillColor: const Color(0xFFF8FAFC),
+                        hintText: 'New password (min 6 chars)',
+                        hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
+                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 19, color: Color(0xFF64748B)),
                         suffixIcon: IconButton(
-                          icon: Icon(obscureNew ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20),
+                          icon: Icon(obscureNew ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: const Color(0xFF64748B)),
                           onPressed: () => setDlgState(() => obscureNew = !obscureNew),
                         ),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    const Text('Confirm New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('Confirm New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: confirmPassCtrl,
                       obscureText: obscureConfirm,
+                      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                       decoration: InputDecoration(
-                        hintText: 'Re-enter new password',
-                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 20),
+                        filled: true,
+                        fillColor: const Color(0xFFF8FAFC),
+                        hintText: 'Confirm new password',
+                        hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
+                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 19, color: Color(0xFF64748B)),
                         suffixIcon: IconButton(
-                          icon: Icon(obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20),
+                          icon: Icon(obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: const Color(0xFF64748B)),
                           onPressed: () => setDlgState(() => obscureConfirm = !obscureConfirm),
                         ),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                        ),
                       ),
                     ),
                   ],
@@ -460,6 +547,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             currentPassword: currentP,
                             newPassword: newP,
                           );
+                          if (!dlgCtx.mounted) return;
                           setDlgState(() => isSaving = false);
 
                           if (res['success'] == true) {
@@ -547,15 +635,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                       onTap: () async {
                         Navigator.pop(ctx);
+                        final messenger = ScaffoldMessenger.of(context);
                         await expenseState.setPrimaryColor(color);
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Primary color updated to $name!'),
-                              backgroundColor: color,
-                            ),
-                          );
-                        }
+                        if (!mounted) return;
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text('Primary color updated to $name!'),
+                            backgroundColor: color,
+                          ),
+                        );
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -626,20 +714,22 @@ class _ProfilePageState extends State<ProfilePage> {
         return StatefulBuilder(
           builder: (ctx, setDlgState) {
             return AlertDialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusLg)),
               title: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: AppColors.primary.withAlpha(25),
                       borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                     ),
-                    child: Icon(Icons.picture_as_pdf_outlined, color: AppColors.primary, size: 22),
+                    child: Icon(Icons.picture_as_pdf_outlined, color: AppColors.primary, size: 20),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   const Expanded(
-                    child: Text('Export Transactions', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+                    child: Text('Export Transactions', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.textPrimary)),
                   ),
                 ],
               ),
@@ -673,7 +763,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Icon(Icons.picture_as_pdf, color: format == 'pdf' ? AppColors.primary : AppColors.textSecondary, size: 28),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'PDF Report',
+                                  'PDF',
                                   style: TextStyle(
                                     fontWeight: format == 'pdf' ? FontWeight.w700 : FontWeight.w500,
                                     color: format == 'pdf' ? AppColors.primary : AppColors.textPrimary,
@@ -705,7 +795,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Icon(Icons.table_chart_outlined, color: format == 'csv' ? AppColors.primary : AppColors.textSecondary, size: 28),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'CSV Spreadsheet',
+                                  'CSV',
                                   style: TextStyle(
                                     fontWeight: format == 'csv' ? FontWeight.w700 : FontWeight.w500,
                                     color: format == 'csv' ? AppColors.primary : AppColors.textPrimary,
@@ -729,7 +819,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Send copy to my email via SMTP', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                      title: const Text('Send copy to my email', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                       subtitle: Text(
                         'Will send ${format.toUpperCase()} directly to $userEmail',
                         style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
@@ -760,6 +850,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             format: format,
                             sendEmail: sendEmail,
                           );
+                          if (!dlgCtx.mounted) return;
                           setDlgState(() => isExporting = false);
 
                           if (res['success'] == true) {
@@ -1230,8 +1321,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: const CustomAppBar(title: 'Profile & Settings'),
+      backgroundColor: AppColors.background,
+      appBar: const CustomAppBar(title: 'Profile & Settings', showBack: false),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
@@ -1240,9 +1331,9 @@ class _ProfilePageState extends State<ProfilePage> {
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
-                color: isDark ? AppColors.darkCard : Colors.white,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.border),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
@@ -1348,22 +1439,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              isDark: isDark,
               onTap: () => _showColorPickerSheet(context, expenseState),
-            ),
-            _buildSwitchTile(
-              icon: Icons.fingerprint,
-              title: 'Biometric Lock',
-              value: _biometricEnabled,
-              isDark: isDark,
-              onChanged: (val) => setState(() => _biometricEnabled = val),
-            ),
-            _buildSwitchTile(
-              icon: Icons.dark_mode_outlined,
-              title: 'Dark Theme',
-              value: isDark,
-              isDark: isDark,
-              onChanged: (val) => expenseState.toggleTheme(val),
             ),
             _buildSettingsTile(
               icon: Icons.monetization_on_outlined,
@@ -1379,14 +1455,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 } catch (_) {}
                 return '$c ($s) • Tap to change';
               }(),
-              isDark: isDark,
               onTap: () => _showCurrencyDialog(context, expenseState),
             ),
             _buildSettingsTile(
               icon: Icons.category_outlined,
               title: 'Manage Categories',
               subtitle: '${expenseState.categories.length} categories • Add, edit, or delete',
-              isDark: isDark,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const CategoriesPage()),
@@ -1400,14 +1474,12 @@ class _ProfilePageState extends State<ProfilePage> {
               icon: Icons.lock_outline,
               title: 'Change Password',
               subtitle: 'Update your current account password',
-              isDark: isDark,
               onTap: () => _showChangePasswordDialog(context),
             ),
             _buildSettingsTile(
               icon: Icons.file_download_outlined,
-              title: 'Export Transactions (CSV / PDF)',
-              subtitle: 'Send financial report to your email via SMTP',
-              isDark: isDark,
+              title: 'Export Transactions',
+              subtitle: 'Send financial report to your email',
               onTap: () => _showExportDialog(context, expenseState),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -1462,46 +1534,21 @@ class _ProfilePageState extends State<ProfilePage> {
     required String title,
     String? subtitle,
     Widget? trailingWidget,
-    required bool isDark,
     required VoidCallback onTap,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.xs),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.border),
+        border: Border.all(color: AppColors.border),
       ),
       child: ListTile(
         onTap: onTap,
-        leading: Icon(icon, color: isDark ? Colors.white : AppColors.textPrimary, size: 22),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: isDark ? Colors.white : AppColors.textPrimary)),
+        leading: Icon(icon, color: AppColors.textPrimary, size: 22),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
         subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)) : null,
         trailing: trailingWidget ?? const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 20),
-      ),
-    );
-  }
-
-  Widget _buildSwitchTile({
-    required IconData icon,
-    required String title,
-    required bool value,
-    required bool isDark,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.xs),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : Colors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.border),
-      ),
-      child: SwitchListTile(
-        secondary: Icon(icon, color: isDark ? Colors.white : AppColors.textPrimary, size: 22),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: isDark ? Colors.white : AppColors.textPrimary)),
-        value: value,
-        activeThumbColor: AppColors.primary,
-        onChanged: onChanged,
       ),
     );
   }

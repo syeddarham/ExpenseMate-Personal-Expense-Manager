@@ -297,6 +297,7 @@ class _BudgetPageState extends State<BudgetPage> {
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
         title: 'Monthly Budget',
+        showBack: false,
         actions: [
           IconButton(
             icon: Icon(Icons.category_outlined, color: AppColors.primary),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/app_bar.dart';
 import '../../models/category.dart';
+import '../../models/transaction.dart';
 import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import '../../utils/helpers.dart';
@@ -23,12 +24,13 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   @override
   Widget build(BuildContext context) {
     final expenseState = Provider.of<ExpenseState>(context);
-    final categorySpending = expenseState.getCategorySpending();
-    final totalExpense = expenseState.totalExpense;
+    final filteredExpenses = _getFilteredExpenses(expenseState.transactions);
+    final categorySpending = _getCategorySpending(filteredExpenses);
+    final totalExpense = _getTotalExpense(filteredExpenses);
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(title: 'Financial Analytics'),
+      appBar: const CustomAppBar(title: 'Financial Analytics', showBack: false),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
@@ -42,8 +44,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             _buildChartCard(categorySpending, totalExpense),
             const SizedBox(height: AppSpacing.lg),
 
-            // Weekly Trend Bar Chart
-            _buildTrendBarChartCard(),
+            // Dynamic Trend Bar Chart
+            _buildTrendBarChartCard(filteredExpenses, expenseState.currencySymbol),
             const SizedBox(height: AppSpacing.lg),
 
             // Category Breakdown List Header
@@ -258,7 +260,109 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     }).toList();
   }
 
-  Widget _buildTrendBarChartCard() {
+  List<FinancialTransaction> _getFilteredExpenses(List<FinancialTransaction> allTransactions) {
+    final now = DateTime.now();
+    return allTransactions.where((tx) {
+      if (!tx.isExpense) return false;
+      final d = tx.date;
+      switch (_selectedFilterIndex) {
+        case 0: // Day (Today)
+          return d.year == now.year && d.month == now.month && d.day == now.day;
+        case 1: // Week (Monday of this week through Sunday)
+          final monday = DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
+          final nextMonday = monday.add(const Duration(days: 7));
+          return !d.isBefore(monday) && d.isBefore(nextMonday);
+        case 2: // Month (Current month)
+          return d.year == now.year && d.month == now.month;
+        case 3: // Year (Current year)
+          return d.year == now.year;
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  Map<TransactionCategory, double> _getCategorySpending(List<FinancialTransaction> filteredTx) {
+    final Map<TransactionCategory, double> map = {};
+    for (final tx in filteredTx) {
+      final existingCat = map.keys.firstWhere(
+        (c) => c.id == tx.category.id,
+        orElse: () => tx.category,
+      );
+      map[existingCat] = (map[existingCat] ?? 0.0) + tx.amount;
+    }
+    return map;
+  }
+
+  double _getTotalExpense(List<FinancialTransaction> filteredTx) {
+    return filteredTx.fold(0.0, (sum, tx) => sum + tx.amount);
+  }
+
+  String get _trendTitle {
+    switch (_selectedFilterIndex) {
+      case 0:
+        return "Today's Spending Trend";
+      case 1:
+        return 'Weekly Spending Trend';
+      case 2:
+        return 'Monthly Spending Trend';
+      case 3:
+        return 'Yearly Spending Trend';
+      default:
+        return 'Spending Trend';
+    }
+  }
+
+  _TrendResult _computeTrendData(List<FinancialTransaction> expenses) {
+    if (_selectedFilterIndex == 0) {
+      // Day (Today): 6 time blocks: 12am (0-3), 4am (4-7), 8am (8-11), 12pm (12-15), 4pm (16-19), 8pm (20-23)
+      final labels = ['12am', '4am', '8am', '12pm', '4pm', '8pm'];
+      final values = List<double>.filled(6, 0.0);
+      for (final tx in expenses) {
+        final bucket = (tx.date.hour ~/ 4).clamp(0, 5);
+        values[bucket] += tx.amount;
+      }
+      return _TrendResult(labels, values);
+    } else if (_selectedFilterIndex == 1) {
+      // Week: Mon - Sun (7 days)
+      final labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      final values = List<double>.filled(7, 0.0);
+      for (final tx in expenses) {
+        final dayIndex = (tx.date.weekday - 1).clamp(0, 6);
+        values[dayIndex] += tx.amount;
+      }
+      return _TrendResult(labels, values);
+    } else if (_selectedFilterIndex == 2) {
+      // Month: Weeks of month (W1: 1-7, W2: 8-14, W3: 15-21, W4: 22-28, W5: 29-31)
+      final labels = ['W1', 'W2', 'W3', 'W4', 'W5'];
+      final values = List<double>.filled(5, 0.0);
+      for (final tx in expenses) {
+        final day = tx.date.day;
+        int bucket = (day - 1) ~/ 7;
+        if (bucket > 4) bucket = 4;
+        values[bucket] += tx.amount;
+      }
+      return _TrendResult(labels, values);
+    } else {
+      // Year: 12 months (Jan - Dec)
+      final labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      final values = List<double>.filled(12, 0.0);
+      for (final tx in expenses) {
+        final mIndex = (tx.date.month - 1).clamp(0, 11);
+        values[mIndex] += tx.amount;
+      }
+      return _TrendResult(labels, values);
+    }
+  }
+
+  Widget _buildTrendBarChartCard(List<FinancialTransaction> filteredExpenses, String currencySymbol) {
+    final trendData = _computeTrendData(filteredExpenses);
+    final labels = trendData.labels;
+    final values = trendData.values;
+    final maxVal = values.isEmpty ? 0.0 : values.reduce((a, b) => a > b ? a : b);
+    final maxY = maxVal > 0 ? (maxVal * 1.3).ceilToDouble() : 100.0;
+    final barWidth = _selectedFilterIndex == 3 ? 8.0 : (_selectedFilterIndex == 0 ? 16.0 : 14.0);
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -270,27 +374,51 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Weekly Spending Trend', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(_trendTitle, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+              Text(
+                'Total: ${AppHelpers.formatCurrency(values.fold(0.0, (s, v) => s + v))}',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+              ),
+            ],
+          ),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             height: 160,
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: 120,
-                barTouchData: BarTouchData(enabled: true),
+                maxY: maxY,
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (_) => const Color(0xFF1E293B),
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      final label = groupIndex < labels.length ? labels[groupIndex] : '';
+                      return BarTooltipItem(
+                        '$label\n${AppHelpers.formatCurrency(rod.toY)}',
+                        const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12),
+                      );
+                    },
+                  ),
+                ),
                 titlesData: FlTitlesData(
                   show: true,
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
+                      reservedSize: 26,
                       getTitlesWidget: (val, meta) {
-                        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                         final index = val.toInt();
-                        if (index >= 0 && index < days.length) {
+                        if (index >= 0 && index < labels.length) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 6),
-                            child: Text(days[index], style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                            child: Text(
+                              labels[index],
+                              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
+                            ),
                           );
                         }
                         return const SizedBox.shrink();
@@ -303,15 +431,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 ),
                 gridData: const FlGridData(show: false),
                 borderData: FlBorderData(show: false),
-                barGroups: [
-                  _makeBarGroup(0, 35),
-                  _makeBarGroup(1, 68),
-                  _makeBarGroup(2, 22),
-                  _makeBarGroup(3, 95),
-                  _makeBarGroup(4, 40),
-                  _makeBarGroup(5, 80),
-                  _makeBarGroup(6, 15),
-                ],
+                barGroups: List.generate(values.length, (i) {
+                  return _makeBarGroup(i, values[i], maxY, barWidth);
+                }),
               ),
             ),
           ),
@@ -320,22 +442,28 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     );
   }
 
-  BarChartGroupData _makeBarGroup(int x, double y) {
+  BarChartGroupData _makeBarGroup(int x, double y, double maxY, double barWidth) {
     return BarChartGroupData(
       x: x,
       barRods: [
         BarChartRodData(
           toY: y,
           color: AppColors.primary,
-          width: 14,
+          width: barWidth,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
-            toY: 120,
-            color: AppColors.border.withAlpha(80),
+            toY: maxY,
+            color: AppColors.border.withAlpha(60),
           ),
         ),
       ],
     );
   }
+}
+
+class _TrendResult {
+  final List<String> labels;
+  final List<double> values;
+  const _TrendResult(this.labels, this.values);
 }
