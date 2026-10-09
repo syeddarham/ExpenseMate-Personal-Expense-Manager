@@ -42,7 +42,10 @@ class AppColors {
   }
 
   static String toHex(Color c) {
-    return '#${(c.toARGB32() & 0x00FFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+    final r = ((c.r * 255).round() & 0xff).toRadixString(16).padLeft(2, '0');
+    final g = ((c.g * 255).round() & 0xff).toRadixString(16).padLeft(2, '0');
+    final b = ((c.b * 255).round() & 0xff).toRadixString(16).padLeft(2, '0');
+    return '#$r$g$b'.toUpperCase();
   }
 
   static const Color accent = Color(0xFF6366F1); // Indigo Accent

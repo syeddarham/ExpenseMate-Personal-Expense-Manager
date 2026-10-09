@@ -68,13 +68,14 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _pickAndUploadPfp() async {
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final List<PlatformFile> files = await FilePicker.pickFiles(
+      final FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.image,
+        withData: true,
       );
-      if (files.isEmpty) return;
+      if (result == null || result.files.isEmpty) return;
 
-      final file = files.first;
-      final bytes = await file.xFile.readAsBytes();
+      final file = result.files.first;
+      final Uint8List bytes = file.bytes ?? await file.xFile.readAsBytes();
 
       if (bytes.isEmpty) return;
 
@@ -629,7 +630,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     final item = AppColors.primaryPalette[idx];
                     final color = item['color'] as Color;
                     final name = item['name'] as String;
-                    final isSelected = expenseState.primaryColor.toARGB32() == color.toARGB32();
+                    final isSelected = expenseState.primaryColor == color;
 
                     return InkWell(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -825,7 +826,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
                       ),
                       value: sendEmail,
-                      activeThumbColor: AppColors.primary,
+                      activeColor: AppColors.primary,
                       onChanged: (val) => setDlgState(() => sendEmail = val),
                     ),
                   ),
@@ -1316,7 +1317,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // Check current primary palette item name
     final currentColorItem = AppColors.primaryPalette.firstWhere(
-      (p) => (p['color'] as Color).toARGB32() == expenseState.primaryColor.toARGB32(),
+      (p) => (p['color'] as Color) == expenseState.primaryColor,
       orElse: () => {'name': 'Custom Color', 'color': expenseState.primaryColor},
     );
 

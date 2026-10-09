@@ -57,7 +57,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         return StatefulBuilder(
           builder: (modalContext, setModalState) {
             final iconData = TransactionCategory.parseIconName(selectedIcon);
-            final colorHex = '#${(selectedColor.toARGB32() & 0x00FFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+            final colorHex = AppColors.toHex(selectedColor);
 
             return Padding(
               padding: EdgeInsets.only(
@@ -171,7 +171,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         separatorBuilder: (context, index) => const SizedBox(width: 8),
                         itemBuilder: (ctx, i) {
                           final c = TransactionCategory.availableColors[i];
-                          final isSelected = selectedColor.toARGB32() == c.toARGB32();
+                          final isSelected = selectedColor == c;
                           return GestureDetector(
                             onTap: () => setModalState(() => selectedColor = c),
                             child: Container(

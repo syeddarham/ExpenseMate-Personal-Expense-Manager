@@ -147,9 +147,10 @@ class TransactionCategory {
   }
 
   String get colorHex {
-    final argb = color.toARGB32();
-    final rgb = argb & 0x00FFFFFF;
-    return '#${rgb.toRadixString(16).padLeft(6, '0').toUpperCase()}';
+    final r = ((color.r * 255).round() & 0xff).toRadixString(16).padLeft(2, '0');
+    final g = ((color.g * 255).round() & 0xff).toRadixString(16).padLeft(2, '0');
+    final b = ((color.b * 255).round() & 0xff).toRadixString(16).padLeft(2, '0');
+    return '#$r$g$b'.toUpperCase();
   }
 
   Map<String, dynamic> toJson() {
