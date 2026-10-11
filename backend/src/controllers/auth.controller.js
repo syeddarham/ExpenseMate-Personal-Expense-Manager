@@ -126,6 +126,16 @@ const login = asyncHandler(async (req, res) => {
     throw new HttpError(403, 'Please verify your email to continue', 'EMAIL_NOT_VERIFIED');
   }
 
+  // Ensure user has default accounts in database if none exist yet
+  try {
+    const [existingAccs] = await pool.query('SELECT COUNT(*) AS c FROM accounts WHERE user_id = ?', [user.id]);
+    if (existingAccs[0].c === 0) {
+      for (const [name, type] of DEFAULT_ACCOUNTS) {
+        await pool.query('INSERT INTO accounts (user_id, name, type) VALUES (?, ?, ?)', [user.id, name, type]);
+      }
+    }
+  } catch (_) {}
+
   res.json({ token: signToken(user.id), user: userToJson(user) });
 });
 

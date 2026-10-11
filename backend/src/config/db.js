@@ -12,10 +12,74 @@ const pool = mysql.createPool({
   database: env.db.name,
   waitForConnections: true,
   connectionLimit: 10,
+  maxIdle: 10,
+  idleTimeout: 30000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 5000,
   decimalNumbers: true, // DECIMAL columns are returned as JS numbers
   timezone: 'Z',
   charset: 'utf8mb4',
 });
+
+// Suppress unhandled error crash if an idle pooled connection is terminated by remote server
+pool.on('connection', (connection) => {
+  connection.on('error', (err) => {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+      // Handled silently; pool will re-establish connection on demand
+    }
+  });
+});
+
+// Resilient wrapper: auto-retry once on transient network/reset errors
+const originalQuery = pool.query.bind(pool);
+const originalExecute = pool.execute.bind(pool);
+const originalGetConnection = pool.getConnection.bind(pool);
+
+function isConnResetError(err) {
+  return (
+    err &&
+    (err.code === 'ECONNRESET' ||
+      err.code === 'PROTOCOL_CONNECTION_LOST' ||
+      err.code === 'EPIPE' ||
+      err.code === 'ETIMEDOUT')
+  );
+}
+
+pool.query = async function (...args) {
+  try {
+    return await originalQuery(...args);
+  } catch (err) {
+    if (isConnResetError(err)) {
+      console.warn(`[db] Connection interrupted (${err.code}), retrying query on fresh connection...`);
+      return await originalQuery(...args);
+    }
+    throw err;
+  }
+};
+
+pool.execute = async function (...args) {
+  try {
+    return await originalExecute(...args);
+  } catch (err) {
+    if (isConnResetError(err)) {
+      console.warn(`[db] Connection interrupted (${err.code}), retrying execute on fresh connection...`);
+      return await originalExecute(...args);
+    }
+    throw err;
+  }
+};
+
+pool.getConnection = async function (...args) {
+  try {
+    return await originalGetConnection(...args);
+  } catch (err) {
+    if (isConnResetError(err)) {
+      console.warn(`[db] Connection interrupted (${err.code}), retrying getConnection on fresh connection...`);
+      return await originalGetConnection(...args);
+    }
+    throw err;
+  }
+};
 
 /**
  * Executes Database/schema.sql (idempotent). Uses a dedicated connection

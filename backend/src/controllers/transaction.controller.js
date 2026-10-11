@@ -19,7 +19,7 @@ async function parseTransactionBody(body, userId) {
   const date = body.date ? v.date(body.date, 'date') : new Date();
   const note = v.string(body.note, 'note', { required: false, max: 2000 });
   const tags = v.string(body.tags, 'tags', { required: false, max: 255 });
-  const receiptUrl = v.string(body.receipt_url, 'receipt_url', { required: false, max: 500 });
+  const receiptUrl = v.string(body.receipt_url, 'receipt_url', { required: false, max: 10000000 });
   v.assert();
 
   // Resolve category (can be id or name or slug)

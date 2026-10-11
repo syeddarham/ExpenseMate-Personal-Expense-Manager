@@ -8,6 +8,7 @@ import '../../models/transaction.dart';
 import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import '../../utils/helpers.dart';
+import '../account/accounts_page.dart';
 import '../category/categories_page.dart';
 import '../scan/scan_screen.dart';
 
@@ -26,10 +27,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final _noteController = TextEditingController();
 
   TransactionCategory? _selectedCategory;
-  String _selectedAccount = 'Debit Card';
+  String? _selectedAccount;
   DateTime _selectedDate = DateTime.now();
 
-  final List<String> _accounts = ['Cash', 'Debit Card', 'Credit Card', 'Bank Account', 'Digital Wallet'];
+  String? _receiptAttachment;
+  String? _receiptName;
 
   @override
   void dispose() {
@@ -261,6 +263,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             : TransactionCategory.defaultCategories.first);
 
     final title = _titleController.text.trim().isEmpty ? category.name : _titleController.text.trim();
+    final accountList = expenseState.accounts.map((a) => a.name).toList();
+    final accountName = (_selectedAccount != null && accountList.contains(_selectedAccount))
+        ? _selectedAccount!
+        : (accountList.isNotEmpty ? accountList.first : 'Cash');
 
     final newTx = FinancialTransaction(
       id: 'tx_${DateTime.now().millisecondsSinceEpoch}',
@@ -269,8 +275,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       type: _selectedType,
       category: category,
       date: _selectedDate,
-      account: _selectedAccount,
+      account: accountName,
       note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+      receiptUrl: _receiptAttachment,
     );
 
     Navigator.pop(context, newTx);
@@ -309,7 +316,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             // Title / Merchant
             CustomTextField(
               label: 'Title or Merchant',
-              hint: 'e.g. Starbucks Coffee, Walmart, Monthly Rent',
+              hint: 'e.g. Monthly Rent, Coffee, Dinner ',
               controller: _titleController,
               prefixIcon: const Icon(Icons.edit_note_rounded, color: AppColors.textMuted),
             ),
@@ -359,50 +366,117 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             const SizedBox(height: AppSpacing.md),
 
             // Add Receipt Attachment (from Figma Screen 20)
-            GestureDetector(
-              onTap: () async {
-                final messenger = ScaffoldMessenger.of(context);
-                final result = await Navigator.push<String>(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ScanScreen()),
-                );
-                if (result != null && mounted) {
-                  messenger.showSnackBar(
-                    SnackBar(
-                      content: Text('Receipt scan saved: $result'),
-                      backgroundColor: AppColors.primary,
-                    ),
-                  );
-                }
-              },
-              child: Container(
+            if (_receiptAttachment != null)
+              Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.primary.withAlpha(15),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  border: Border.all(
-                    color: AppColors.primary.withAlpha(128),
-                    style: BorderStyle.solid,
-                  ),
+                  border: Border.all(color: AppColors.primary.withAlpha(80)),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      'Add Receipt / Invoice Attachment',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withAlpha(25),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                       ),
+                      child: Icon(Icons.receipt_long_rounded, color: AppColors.primary, size: 22),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.check_circle, color: AppColors.primary, size: 15),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Receipt Photo Attached',
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.primary),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _receiptName ?? 'Receipt image attached',
+                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
+                      tooltip: 'Remove receipt',
+                      onPressed: () {
+                        setState(() {
+                          _receiptAttachment = null;
+                          _receiptName = null;
+                        });
+                      },
                     ),
                   ],
                 ),
+              )
+            else
+              GestureDetector(
+                onTap: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ScanScreen()),
+                  );
+                  if (result != null && mounted) {
+                    setState(() {
+                      if (result is Map) {
+                        _receiptAttachment = result['data'] as String?;
+                        _receiptName = result['name'] as String?;
+                      } else if (result is String) {
+                        _receiptAttachment = result;
+                        _receiptName = 'receipt.jpg';
+                      }
+                    });
+                    messenger.showSnackBar(
+                      SnackBar(
+                        content: const Text('Receipt image attached!'),
+                        backgroundColor: AppColors.primary,
+                      ),
+                    );
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                    border: Border.all(
+                      color: AppColors.primary.withAlpha(128),
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        'Add Receipt / Invoice Attachment',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
             const SizedBox(height: AppSpacing.xl),
 
             // Save / Submit Button
@@ -607,17 +681,71 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
   Widget _buildAccountDropdown() {
     final expenseState = Provider.of<ExpenseState>(context);
-    final accountList = expenseState.accounts.isNotEmpty
-        ? expenseState.accounts.map((a) => a.name).toList()
-        : _accounts;
-    final currentAccount = accountList.contains(_selectedAccount)
-        ? _selectedAccount
+    final accountList = expenseState.accounts.map((a) => a.name).toList();
+
+    if (accountList.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AccountsPage()),
+                ),
+                child: Text('+ Add', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary)),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AccountsPage()),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.add_circle_outline, size: 16, color: AppColors.primary),
+                  const SizedBox(width: 6),
+                  Text('Add Account', style: TextStyle(fontSize: 13, color: AppColors.primary, fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    final currentAccount = (_selectedAccount != null && accountList.contains(_selectedAccount))
+        ? _selectedAccount!
         : accountList.first;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AccountsPage()),
+              ),
+              child: Text('Manage', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary)),
+            ),
+          ],
+        ),
         const SizedBox(height: AppSpacing.xs),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -633,7 +761,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               items: accountList.map((acc) {
                 return DropdownMenuItem(
                   value: acc,
-                  child: Text(acc, style: const TextStyle(fontSize: 13)),
+                  child: Text(acc, style: const TextStyle(fontSize: 13), overflow: TextOverflow.ellipsis),
                 );
               }).toList(),
               onChanged: (val) {

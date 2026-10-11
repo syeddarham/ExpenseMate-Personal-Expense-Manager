@@ -11,6 +11,7 @@ import '../analytics/analytics_page.dart';
 import '../budget/budget_page.dart';
 import '../profile/profile_page.dart';
 import '../transaction/add_transaction_page.dart';
+import '../transaction/transactions_screen.dart';
 
 /// Screen 02: Home / Dashboard Screen with integrated Tab Navigation
 class HomePage extends StatefulWidget {
@@ -502,9 +503,9 @@ class _HomePageState extends State<HomePage> {
         Row(
           children: [
             const Text(
-              'Recent Activity',
+              'Recent Transactions',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
               ),
@@ -523,9 +524,32 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        const Text(
-          'Swipe left to delete',
-          style: TextStyle(fontSize: 11, color: AppColors.textMuted),
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const TransactionsScreen()),
+            );
+          },
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'All Transactions',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(width: 3),
+                Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.primary),
+              ],
+            ),
+          ),
         ),
       ],
     );

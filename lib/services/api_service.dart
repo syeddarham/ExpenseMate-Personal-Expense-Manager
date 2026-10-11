@@ -374,6 +374,43 @@ class ApiService {
     return null;
   }
 
+  static Future<Account?> updateAccount({
+    required String id,
+    String? name,
+    String? type,
+    double? openingBalance,
+  }) async {
+    try {
+      final payload = <String, dynamic>{};
+      if (name != null) payload['name'] = name;
+      if (type != null) payload['type'] = type;
+      if (openingBalance != null) payload['opening_balance'] = openingBalance;
+
+      final res = await http.put(
+        Uri.parse('$baseUrl/accounts/$id'),
+        headers: _headers,
+        body: jsonEncode(payload),
+      );
+      if (res.statusCode == 200) {
+        final body = jsonDecode(res.body);
+        return Account.fromJson(body['account'] as Map<String, dynamic>);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  static Future<bool> deleteAccount(String id) async {
+    try {
+      final res = await http.delete(
+        Uri.parse('$baseUrl/accounts/$id'),
+        headers: _headers,
+      );
+      return res.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Categories
   // ---------------------------------------------------------------------------

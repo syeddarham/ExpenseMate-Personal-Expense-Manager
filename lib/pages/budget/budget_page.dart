@@ -79,7 +79,18 @@ class _BudgetPageState extends State<BudgetPage> {
                     label: 'Monthly Limit Amount',
                     controller: controller,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    prefixIcon: Icon(Icons.attach_money, color: AppColors.primary),
+                    prefixIcon: Container(
+                      width: 40,
+                      alignment: Alignment.center,
+                      child: Text(
+                        expenseState.currencySymbol,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   CustomButton(
@@ -240,7 +251,18 @@ class _BudgetPageState extends State<BudgetPage> {
                     hint: 'e.g. 500',
                     controller: controller,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    prefixIcon: Icon(Icons.attach_money, color: AppColors.primary),
+                    prefixIcon: Container(
+                      width: 40,
+                      alignment: Alignment.center,
+                      child: Text(
+                        expenseState.currencySymbol,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
 

@@ -315,8 +315,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
   _TrendResult _computeTrendData(List<FinancialTransaction> expenses) {
     if (_selectedFilterIndex == 0) {
-      // Day (Today): 6 time blocks: 12am (0-3), 4am (4-7), 8am (8-11), 12pm (12-15), 4pm (16-19), 8pm (20-23)
-      final labels = ['12am', '4am', '8am', '12pm', '4pm', '8pm'];
+      // Day (Today): 6 duration spans covering the full 24-hour day:
+      final labels = ['12am-4am', '4am-8am', '8am-12pm', '12pm-4pm', '4pm-8pm', '8pm-12am'];
       final values = List<double>.filled(6, 0.0);
       for (final tx in expenses) {
         final bucket = (tx.date.hour ~/ 4).clamp(0, 5);
@@ -409,7 +409,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 26,
+                      reservedSize: 28,
                       getTitlesWidget: (val, meta) {
                         final index = val.toInt();
                         if (index >= 0 && index < labels.length) {
@@ -417,7 +417,11 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                             padding: const EdgeInsets.only(top: 6),
                             child: Text(
                               labels[index],
-                              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                fontSize: _selectedFilterIndex == 0 ? 9.5 : 11,
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           );
                         }

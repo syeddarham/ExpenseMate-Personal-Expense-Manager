@@ -12,6 +12,7 @@ import '../../services/currency_service.dart';
 import '../../services/expense_state.dart';
 import '../../utils/constants.dart';
 import '../../utils/currencies_data.dart';
+import '../account/accounts_page.dart';
 import '../category/categories_page.dart';
 import '../login/login_page.dart';
 
@@ -1446,15 +1447,11 @@ class _ProfilePageState extends State<ProfilePage> {
               icon: Icons.monetization_on_outlined,
               title: 'Preferred Currency',
               subtitle: () {
-                String c = 'USD';
                 String s = '\$';
-                try {
-                  c = expenseState.currencyCode;
-                } catch (_) {}
                 try {
                   s = expenseState.currencySymbol;
                 } catch (_) {}
-                return '$c ($s) • Tap to change';
+                return '($s) • Tap to change';
               }(),
               onTap: () => _showCurrencyDialog(context, expenseState),
             ),
@@ -1465,6 +1462,15 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const CategoriesPage()),
+              ),
+            ),
+            _buildSettingsTile(
+              icon: Icons.account_balance_wallet_outlined,
+              title: 'Manage Accounts',
+              subtitle: '${expenseState.accounts.length} accounts • Add, edit, or delete',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AccountsPage()),
               ),
             ),
             const SizedBox(height: AppSpacing.md),

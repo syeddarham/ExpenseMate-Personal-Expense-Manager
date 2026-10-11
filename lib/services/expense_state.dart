@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/account.dart';
 import '../models/budget.dart';
 import '../models/category.dart';
@@ -7,6 +9,7 @@ import '../utils/constants.dart';
 import '../utils/currencies_data.dart';
 import '../utils/helpers.dart';
 import 'api_service.dart';
+import 'auth_service.dart';
 
 class ExpenseState extends ChangeNotifier {
   final List<FinancialTransaction> _transactions = [];
@@ -59,10 +62,108 @@ class ExpenseState extends ChangeNotifier {
     return totalIncome - totalExpense;
   }
 
-  /// Load initial data from the Node.js + MySQL backend
-  Future<void> loadInitialData() async {
-    _isLoading = true;
-    notifyListeners();
+  String get _userCacheKey {
+    final user = AuthService().currentUser;
+    return user != null ? 'user_${user.id}' : 'default';
+  }
+
+  /// Load cached data instantly from device storage
+  Future<bool> _loadFromCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = _userCacheKey;
+
+      final accStr = prefs.getString('cache_accounts_$key');
+      final catStr = prefs.getString('cache_categories_$key');
+      final txStr = prefs.getString('cache_transactions_$key');
+      final bgStr = prefs.getString('cache_budgets_$key');
+      final cCode = prefs.getString('cache_cur_code_$key');
+      final cSym = prefs.getString('cache_cur_sym_$key');
+      final colorHex = prefs.getString('cache_primary_color_$key');
+
+      bool loadedAny = false;
+
+      if (cCode != null && cCode.isNotEmpty) {
+        _currencyCode = cCode;
+      }
+      if (cSym != null && cSym.isNotEmpty) {
+        _currencySymbol = cSym;
+        AppHelpers.currentCurrencySymbol = cSym;
+      }
+      if (colorHex != null && colorHex.isNotEmpty) {
+        AppColors.setPrimary(AppColors.parseHex(colorHex));
+      }
+
+      if (accStr != null && accStr.isNotEmpty) {
+        final List list = jsonDecode(accStr) as List;
+        _accounts.clear();
+        _accounts.addAll(list.map((j) => Account.fromJson(j as Map<String, dynamic>)));
+        loadedAny = true;
+      }
+
+      if (catStr != null && catStr.isNotEmpty) {
+        final List list = jsonDecode(catStr) as List;
+        _categories = list.map((j) => TransactionCategory.fromJson(j as Map<String, dynamic>)).toList();
+        loadedAny = true;
+      }
+
+      if (txStr != null && txStr.isNotEmpty) {
+        final List list = jsonDecode(txStr) as List;
+        _transactions.clear();
+        _transactions.addAll(list.map((j) => FinancialTransaction.fromJson(j as Map<String, dynamic>)));
+        loadedAny = true;
+      }
+
+      if (bgStr != null && bgStr.isNotEmpty) {
+        final List list = jsonDecode(bgStr) as List;
+        _budgets.clear();
+        _budgets.addAll(list.map((j) => Budget.fromJson(j as Map<String, dynamic>)));
+        loadedAny = true;
+      }
+
+      return loadedAny;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Persist active state to local device storage
+  Future<void> _saveToCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = _userCacheKey;
+
+      await prefs.setString('cache_accounts_$key', jsonEncode(_accounts.map((a) => a.toJson()).toList()));
+      await prefs.setString('cache_categories_$key', jsonEncode(_categories.map((c) => c.toJson()).toList()));
+      await prefs.setString('cache_transactions_$key', jsonEncode(_transactions.map((t) => t.toJson()).toList()));
+      await prefs.setString('cache_budgets_$key', jsonEncode(_budgets.map((b) => b.toJson()).toList()));
+      if (_currencyCode != null) await prefs.setString('cache_cur_code_$key', _currencyCode!);
+      if (_currencySymbol != null) await prefs.setString('cache_cur_sym_$key', _currencySymbol!);
+      await prefs.setString('cache_primary_color_$key', AppColors.toHex(AppColors.primary));
+      await prefs.setInt('cache_timestamp_$key', DateTime.now().millisecondsSinceEpoch);
+    } catch (_) {}
+  }
+
+  /// Load initial data with instant local caching to avoid unnecessary API calls
+  Future<void> loadInitialData({bool forceRefresh = false}) async {
+    final hadCache = await _loadFromCache();
+    if (hadCache) {
+      _isLoading = false;
+      notifyListeners();
+    } else {
+      _isLoading = true;
+      notifyListeners();
+    }
+
+    // Check cache freshness (15-minute lifespan)
+    final prefs = await SharedPreferences.getInstance();
+    final lastTime = prefs.getInt('cache_timestamp_$_userCacheKey') ?? 0;
+    final isStale = (DateTime.now().millisecondsSinceEpoch - lastTime) > (15 * 60 * 1000);
+
+    // If cache is present and still fresh, avoid making API calls
+    if (!forceRefresh && hadCache && !isStale) {
+      return;
+    }
 
     try {
       // 1. Fetch user profile & currency preference
@@ -82,14 +183,18 @@ class ExpenseState extends ChangeNotifier {
         }
       }
 
-      // 2. Fetch categories strictly for this user
+      // 2. Fetch categories
       final cats = await ApiService.getCategories();
-      _categories = cats.isNotEmpty ? cats : List.from(TransactionCategory.defaultCategories);
+      if (cats.isNotEmpty) {
+        _categories = cats;
+      }
 
       // 3. Fetch accounts
       final accs = await ApiService.getAccounts();
-      _accounts.clear();
-      _accounts.addAll(accs);
+      if (accs.isNotEmpty || _accounts.isEmpty) {
+        _accounts.clear();
+        _accounts.addAll(accs);
+      }
 
       // 4. Fetch transactions
       final txs = await ApiService.getTransactions();
@@ -100,6 +205,9 @@ class ExpenseState extends ChangeNotifier {
       final bgs = await ApiService.getBudgets();
       _budgets.clear();
       _budgets.addAll(bgs);
+
+      // Update cache with fresh data
+      await _saveToCache();
     } catch (_) {}
 
     _isLoading = false;
@@ -142,6 +250,7 @@ class ExpenseState extends ChangeNotifier {
     }
 
     notifyListeners();
+    _saveToCache();
 
     // Call API backend
     final saved = await ApiService.addTransaction(tx);
@@ -150,6 +259,7 @@ class ExpenseState extends ChangeNotifier {
       if (idx != -1) {
         _transactions[idx] = saved;
       }
+      _saveToCache();
       return true;
     }
     return false;
@@ -191,6 +301,7 @@ class ExpenseState extends ChangeNotifier {
 
       _transactions.removeAt(txIndex);
       notifyListeners();
+      _saveToCache();
 
       return await ApiService.deleteTransaction(id);
     }
@@ -211,6 +322,7 @@ class ExpenseState extends ChangeNotifier {
         month: b.month,
       );
       notifyListeners();
+      _saveToCache();
     } else {
       final cat = _categories.firstWhere(
         (c) => c.id == categoryId,
@@ -225,6 +337,7 @@ class ExpenseState extends ChangeNotifier {
         month: DateTime.now(),
       ));
       notifyListeners();
+      _saveToCache();
     }
 
     final ok = await ApiService.setBudget(categoryId: categoryId, limitAmount: newLimit);
@@ -366,6 +479,105 @@ class ExpenseState extends ChangeNotifier {
           month: b.month,
         );
       }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Account Management (Dynamic CRUD)
+  // ---------------------------------------------------------------------------
+
+  Future<Account?> addAccount({
+    required String name,
+    required String type,
+    double openingBalance = 0.0,
+  }) async {
+    if (ApiService.hasToken) {
+      final newAcc = await ApiService.createAccount(
+        name: name,
+        type: type,
+        openingBalance: openingBalance,
+      );
+      if (newAcc != null) {
+        _accounts.add(newAcc);
+        notifyListeners();
+        _saveToCache();
+        return newAcc;
+      }
+      return null;
+    } else {
+      final newAcc = Account(
+        id: 'acc_${DateTime.now().millisecondsSinceEpoch}',
+        name: name,
+        type: type,
+        openingBalance: openingBalance,
+        balance: openingBalance,
+      );
+      _accounts.add(newAcc);
+      notifyListeners();
+      _saveToCache();
+      return newAcc;
+    }
+  }
+
+  Future<Account?> updateAccount({
+    required String id,
+    required String name,
+    required String type,
+    double? openingBalance,
+  }) async {
+    if (ApiService.hasToken) {
+      final updated = await ApiService.updateAccount(
+        id: id,
+        name: name,
+        type: type,
+        openingBalance: openingBalance,
+      );
+      if (updated != null) {
+        final idx = _accounts.indexWhere((a) => a.id == id);
+        if (idx != -1) {
+          _accounts[idx] = updated;
+          notifyListeners();
+          _saveToCache();
+        }
+        return updated;
+      }
+      return null;
+    } else {
+      final idx = _accounts.indexWhere((a) => a.id == id);
+      if (idx != -1) {
+        final current = _accounts[idx];
+        final delta = (openingBalance ?? current.openingBalance) - current.openingBalance;
+        final updated = Account(
+          id: id,
+          name: name,
+          type: type,
+          openingBalance: openingBalance ?? current.openingBalance,
+          balance: current.balance + delta,
+        );
+        _accounts[idx] = updated;
+        notifyListeners();
+        _saveToCache();
+        return updated;
+      }
+      return null;
+    }
+  }
+
+  Future<bool> deleteAccount(String id) async {
+    if (ApiService.hasToken) {
+      final ok = await ApiService.deleteAccount(id);
+      if (ok) {
+        _accounts.removeWhere((a) => a.id == id);
+        notifyListeners();
+        _saveToCache();
+        return true;
+      }
+      return false;
+    } else {
+      _accounts.removeWhere((a) => a.id == id);
+      notifyListeners();
+      _saveToCache();
+      return true;
     }
   }
 
