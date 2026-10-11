@@ -29,7 +29,52 @@ class TransactionCategory {
 
   static IconData _parseIcon(dynamic raw) {
     if (raw is int) {
-      return IconData(raw, fontFamily: 'MaterialIcons');
+      switch (raw) {
+        case 0xe532:
+          return Icons.restaurant;
+        case 0xe59c:
+          return Icons.shopping_cart;
+        case 0xe1d7:
+          return Icons.directions_car;
+        case 0xf020:
+          return Icons.receipt_long;
+        case 0xe406:
+          return Icons.movie;
+        case 0xf1c6:
+          return Icons.medical_services;
+        case 0xf37d:
+          return Icons.shopping_bag;
+        case 0xe559:
+          return Icons.school;
+        case 0xe29b:
+          return Icons.flight;
+        case 0xe4a1:
+          return Icons.pets;
+        case 0xe28e:
+          return Icons.fitness_center;
+        case 0xf3cb:
+          return Icons.sports_esports;
+        case 0xe194:
+          return Icons.coffee;
+        case 0xe3a8:
+          return Icons.local_gas_station;
+        case 0xe318:
+          return Icons.home;
+        case 0xe4a2:
+          return Icons.phone_android;
+        case 0xe6e4:
+          return Icons.wifi;
+        case 0xe08f:
+          return Icons.attach_money;
+        case 0xe678:
+          return Icons.trending_up;
+        case 0xe6f4:
+          return Icons.work;
+        case 0xe13f:
+          return Icons.card_giftcard;
+        default:
+          return Icons.category;
+      }
     }
     if (raw is String) {
       switch (raw.toLowerCase()) {
