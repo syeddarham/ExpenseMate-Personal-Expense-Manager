@@ -8,7 +8,19 @@ import '../models/user.dart';
 
 class ApiService {
   // Configurable base URL for Node.js + Express backend
-  static String baseUrl = 'http://localhost:5000/api';
+  static String _baseUrl = 'http://213.136.94.160:5000/api';
+
+  static String get baseUrl => _baseUrl;
+  static set baseUrl(String url) {
+    var trimmed = url.trim();
+    if (trimmed.endsWith('/')) {
+      trimmed = trimmed.substring(0, trimmed.length - 1);
+    }
+    if (!trimmed.endsWith('/api')) {
+      trimmed = '$trimmed/api';
+    }
+    _baseUrl = trimmed;
+  }
 
   static String? _token;
 
