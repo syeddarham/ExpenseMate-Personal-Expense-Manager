@@ -26,11 +26,11 @@ migrate_working_dir/
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins-dependencies
+**/.dart_tool/
+**/.flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+**/build/
 /coverage/
 
 # Symbolication related
@@ -45,7 +45,8 @@ app.*.map.json
 /android/app/release
 
 # Sensitive config & environment
-.env
 .agents/**/mcp_config.json
 
-backend/node_modules
+**/node_modules/
+/backend/node_modules
+/Backend/node_modules
