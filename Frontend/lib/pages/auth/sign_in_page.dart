@@ -89,6 +89,22 @@ class _SignInPageState extends State<SignInPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Center(
+                  child: Container(
+                    width: 72,
+                    height: 72,
+                    margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryLight,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+                    ),
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Image.asset(
+                      'assets/icons/budget.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
                 const Text(
                   'Welcome Back!',
                   style: TextStyle(

@@ -95,10 +95,10 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.account_balance_wallet_rounded,
-                        color: Colors.white,
-                        size: 38,
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      child: Image.asset(
+                        'assets/icons/budget.png',
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),

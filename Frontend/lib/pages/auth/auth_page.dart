@@ -27,10 +27,10 @@ class AuthPage extends StatelessWidget {
                     color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                   ),
-                  child: Icon(
-                    Icons.account_balance_wallet_rounded,
-                    color: AppColors.primaryDark,
-                    size: 38,
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Image.asset(
+                    'assets/icons/budget.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),

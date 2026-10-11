@@ -50,10 +50,10 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.account_balance_wallet_rounded,
-                color: Colors.white,
-                size: 46,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Image.asset(
+                'assets/icons/budget.png',
+                fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
