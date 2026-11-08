@@ -1,20 +1,21 @@
-const app = require('./src/app');
 const env = require('./src/config/env');
-const { initSchema, pool } = require('./src/config/db');
+const { buildContainer } = require('./src/container');
+const { createApp } = require('./src/app');
+const { Migrator } = require('./src/database/migrator');
 
 // ExpenseMate Server Entry Point
 async function start() {
   try {
     if (env.autoInitDb) {
-      console.log('[server] Initializing database schema from Database/schema.sql...');
-      await initSchema();
-      console.log('[server] Database schema initialized successfully.');
+      console.log('[server] Applying pending database migrations...');
+      await new Migrator({ db: env.db }).up();
     }
 
-    // Test pool connection
-    const [result] = await pool.query('SELECT 1 + 1 AS solution');
+    const container = buildContainer({ env });
+    await container.db.query('SELECT 1');
     console.log('[server] Connected to MySQL database successfully.');
 
+    const app = createApp(container);
     app.listen(env.port, () => {
       console.log(`[server] ExpenseMate Backend running on http://localhost:${env.port}`);
       console.log(`[server] REST API endpoints available at http://localhost:${env.port}/api`);

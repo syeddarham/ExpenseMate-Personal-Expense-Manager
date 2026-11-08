@@ -1,4 +1,7 @@
-/** Row -> API JSON mappers (keeps controllers free of formatting logic). */
+/**
+ * Domain object -> API JSON mappers. Used only by controllers, so the
+ * response format (which the Flutter app depends on) is defined in one place.
+ */
 
 function userToJson(row) {
   return {
@@ -27,25 +30,15 @@ function categoryToJson(row) {
   };
 }
 
-function accountToJson(row) {
+function accountToJson(account) {
   return {
-    id: String(row.id),
-    name: row.name,
-    type: row.type,
-    opening_balance: Number(row.opening_balance),
-    balance: Number(row.balance !== undefined ? row.balance : row.opening_balance),
+    id: String(account.id),
+    name: account.name,
+    type: account.type,
+    opening_balance: Number(account.opening_balance),
+    balance: Number(account.balance !== undefined ? account.balance : account.opening_balance),
   };
 }
-
-/** SELECT used by every endpoint that returns transactions. */
-const TRANSACTION_SELECT = `
-  SELECT t.id, t.title, t.amount, t.type, t.note, t.tags, t.receipt_url, t.transaction_date,
-         t.account_id, a.name AS account_name,
-         t.category_id, c.name AS category_name, c.icon AS category_icon,
-         c.color AS category_color, c.is_expense AS category_is_expense
-  FROM transactions t
-  JOIN accounts a   ON a.id = t.account_id
-  JOIN categories c ON c.id = t.category_id`;
 
 function transactionToJson(row) {
   return {
@@ -69,4 +62,48 @@ function transactionToJson(row) {
   };
 }
 
-module.exports = { userToJson, categoryToJson, accountToJson, TRANSACTION_SELECT, transactionToJson };
+/** One BudgetService.monthlySummary() entry. */
+function budgetToJson({ category, limit, spent, monthStart }) {
+  return {
+    id: String(category.id),
+    title: category.name,
+    limit_amount: limit,
+    spent_amount: spent,
+    month: monthStart.toISOString(),
+    category: { ...categoryToJson(category), is_expense: true },
+  };
+}
+
+function overviewToJson(o) {
+  return {
+    total_balance: o.totalBalance,
+    total_income: o.totalIncome,
+    total_expense: o.totalExpense,
+    total_budget: o.totalBudget,
+    recent_transactions: o.recentTransactions.map(transactionToJson),
+  };
+}
+
+function analyticsToJson(a) {
+  return {
+    period: a.period,
+    total_income: a.totalIncome,
+    total_expense: a.totalExpense,
+    category_spending: a.categorySpending.map((c) => ({
+      category: { ...categoryToJson(c.category), is_expense: true },
+      amount: c.amount,
+      percentage: c.percentage,
+    })),
+    trend: a.trend,
+  };
+}
+
+module.exports = {
+  userToJson,
+  categoryToJson,
+  accountToJson,
+  transactionToJson,
+  budgetToJson,
+  overviewToJson,
+  analyticsToJson,
+};
