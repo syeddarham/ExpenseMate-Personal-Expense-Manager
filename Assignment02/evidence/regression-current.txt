@@ -1,0 +1,24 @@
+# system tests running against: external server in /Users/arham/Desktop/Arham/ExpenseMate-Personal-Expense-Manager/Backend
+✔ ST-01 Registration: register -> e-mail code -> verify -> login -> profile (11864.220431ms)
+✔ ST-02 Access control: unverified login is blocked, protected routes need a valid token (470.288683ms)
+✔ ST-03 Password reset: forgot -> code -> reset -> login with the new password only (657.67012ms)
+✔ ST-04 Add Expense / Income: saved, listed, and reflected in balances and the dashboard (294.688617ms)
+✔ ST-05 Edit and delete a transaction (248.029171ms)
+✔ ST-06 Monthly Budget Summary: limits, spending and carry-forward to the next month (225.214607ms)
+✔ [D2] ST-07 Dashboard total budget counts each category once after a limit is changed (238.818969ms)
+✔ ST-08 Categories: create, reject duplicates, protect categories in use, delete unused (244.1001ms)
+✔ ST-09 Analytics: category breakdown percentages and trend match the totals (226.894589ms)
+✔ ST-10 Export: CSV statement is generated without e-mail (228.021739ms)
+✔ [D3] ST-11 Export: account names are filled in and tagged transactions do not crash the export (232.810221ms)
+✔ [D1] ST-12 Receipts: a photographed receipt (base64 image, ~150 KB) is saved and returned (260.204414ms)
+✔ ST-13 Settings: currency change converts every stored amount (250.270444ms)
+✔ ST-15 Profile: update name and preferences, change password, reject a taken e-mail (1103.110123ms)
+✔ ST-14 Accounts: create, rename, delete; other users cannot see them (439.090935ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17682.510537

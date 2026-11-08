@@ -1,0 +1,21 @@
+$ flutter analyze
+No issues found! (ran in 7.8s)
+
+$ flutter test --concurrency=1
+00:00 +0: test/widget_test.dart: ExpenseMateApp smoke test
+00:05 +1: test/services/api_service_test.dart: configuration baseUrl is normalised to end in /api
+00:05 +2: test/services/api_service_test.dart: configuration isInsecureRemote flags plain HTTP to remote hosts only
+00:05 +3: test/services/api_service_test.dart: authentication register normalises the e-mail and reports success
+00:05 +4: test/services/api_service_test.dart: authentication register surfaces the backend error message
+00:05 +5: test/services/api_service_test.dart: authentication login stores the token and later requests send it
+00:05 +6: test/services/api_service_test.dart: authentication login reports unverified accounts so the app can open the OTP screen
+00:05 +7: test/services/api_service_test.dart: authentication a network failure becomes a friendly error, never an exception
+00:05 +8: test/services/api_service_test.dart: data endpoints getAccounts parses the list; errors and bad JSON give an empty list
+00:05 +9: test/services/api_service_test.dart: data endpoints getCategories falls back to the built-in defaults when offline
+[ApiService] request failed: ClientException: offline
+00:05 +10: test/services/api_service_test.dart: data endpoints getTransactions sends filters as query parameters
+00:05 +11: test/services/api_service_test.dart: data endpoints getBudgets only adds ?month= when a month is given
+00:05 +12: test/services/api_service_test.dart: data endpoints updateMe sends the currency as preferred_currency (defect D4)
+00:05 +13: test/services/api_service_test.dart: data endpoints deleteCategory returns the backend reason when deletion is refused
+00:05 +14: test/services/api_service_test.dart: data endpoints exportTransactions maps the export fields
+00:05 +15: All tests passed!

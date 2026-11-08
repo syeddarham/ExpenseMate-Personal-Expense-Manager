@@ -1,0 +1,143 @@
+
+> expensemate-backend@1.0.0 test:coverage
+> node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-include="src/**" "tests/unit/**/*.test.js" "tests/integration/**/*.test.js" "tests/system/**/*.test.js"
+
+✔ fresh database: all migrations apply in order and a second run is a no-op (10498.885963ms)
+✔ existing Assignment 01 database: records are preserved and receipts are moved (295.869707ms)
+✔ defect D1: a 200 KB base64 receipt fails on the old schema and is stored after migration 002 (460.116656ms)
+✔ rollback: down restores receipt_url and copies back receipts that fit (695.314168ms)
+✔ an applied migration that was edited afterwards is refused (384.454873ms)
+✔ TransactionRepository: create + findById joins account, category and receipt (9299.921123ms)
+✔ TransactionRepository: rows of other users are invisible (6.901402ms)
+✔ TransactionRepository: deleting a transaction cascades to its receipt (9.421127ms)
+✔ TransactionRepository: list filters by type, search and date range (18.308233ms)
+✔ AccountRepository: raw income/expense totals per account (balance computed by the service) (4.901677ms)
+✔ AccountRepository/CategoryRepository: name lookups prefer exact matches (3.951015ms)
+✔ BudgetRepository: returns every limit up to the month, oldest first (23.548168ms)
+✔ UserRepository: profile updates are limited to whitelisted columns (8.762004ms)
+✔ Database.transaction: rolls back every repository write on error (16.28992ms)
+# system tests running against: current code (in-process)
+✔ ST-01 Registration: register -> e-mail code -> verify -> login -> profile (10986.931535ms)
+✔ ST-02 Access control: unverified login is blocked, protected routes need a valid token (661.310134ms)
+✔ ST-03 Password reset: forgot -> code -> reset -> login with the new password only (933.208456ms)
+✔ ST-04 Add Expense / Income: saved, listed, and reflected in balances and the dashboard (342.402143ms)
+✔ ST-05 Edit and delete a transaction (316.952293ms)
+✔ ST-06 Monthly Budget Summary: limits, spending and carry-forward to the next month (361.675238ms)
+✔ [D2] ST-07 Dashboard total budget counts each category once after a limit is changed (351.144284ms)
+✔ ST-08 Categories: create, reject duplicates, protect categories in use, delete unused (461.691262ms)
+✔ ST-09 Analytics: category breakdown percentages and trend match the totals (309.701774ms)
+✔ ST-10 Export: CSV statement is generated without e-mail (267.065221ms)
+✔ [D3] ST-11 Export: account names are filled in and tagged transactions do not crash the export (275.072593ms)
+✔ [D1] ST-12 Receipts: a photographed receipt (base64 image, ~150 KB) is saved and returned (313.183869ms)
+✔ ST-13 Settings: currency change converts every stored amount (307.896096ms)
+✔ ST-15 Profile: update name and preferences, change password, reject a taken e-mail (1374.171147ms)
+✔ ST-14 Accounts: create, rename, delete; other users cannot see them (527.176589ms)
+✔ accountBalance: opening + income - expense, rounded to cents (1.77997ms)
+✔ ensureDefaultAccounts: creates the five starter accounts only when the user has none (0.72984ms)
+✔ update/delete: accounts of other users are reported as not found (1.694724ms)
+✔ categoryBreakdown: percentages of total spending, one decimal place (2.902641ms)
+✔ bucketTrend: each transaction lands in exactly one [start, end) bucket (1.681914ms)
+✔ overview: balance = opening balances + all-time income - all-time expense (3.348748ms)
+✔ controllers never touch repositories or the database (7.919915ms)
+✔ services never touch the database directly or depend on controllers (1.78663ms)
+✔ repositories depend on nothing above them (4.537965ms)
+✔ only repositories (and the migration runner) contain SQL (6.093685ms)
+✔ effectiveLimits: the latest limit for each category wins (carry-forward rule) (1.932372ms)
+✔ monthlySummary: one entry per expense category with limit and spending (3.296208ms)
+✔ monthlySummary: a limit set in an earlier month still applies later (0.723952ms)
+✔ totalBudgetForMonth: counts each category once even after the limit was changed (defect D2) (1.244148ms)
+✔ setLimit: rejects income categories and unknown ids (1.436905ms)
+✔ setLimit: stores the limit for the month and returns the updated entry (0.587734ms)
+✔ normaliseTags: comma strings, arrays and blanks (2.86248ms)
+✔ summarise: totals are exact to the cent (0.830844ms)
+✔ csvField: quotes, doubles embedded quotes and neutralises formulas (0.6006ms)
+✔ renderCsv: header, account names and tags are written (defect D3: Assignment 01 crashed on tags) (2.726536ms)
+✔ renderPdf: produces a valid multi-page PDF for long statements (256.049352ms)
+✔ ExportService: CSV export keeps the Assignment 01 response shape (6.207536ms)
+✔ ExportService: PDF export is e-mailed when requested (17.34442ms)
+✔ ExportService: unknown formats fall back to CSV; unknown users give 404 (1.216372ms)
+✔ loadMigrations: pairs up/down files, sorts by version and ignores other files (15.083948ms)
+✔ loadMigrations: a down file without an up file is an error (2.748452ms)
+✔ checksum: line endings do not matter, content does (0.418729ms)
+✔ the real migrations directory is well formed (2.663865ms)
+✔ resolveCategoryId: numeric id owned by the user is used as-is (4.27662ms)
+✔ resolveCategoryId: a name (or part of one) is matched (0.516996ms)
+✔ resolveCategoryId: unknown values fall back to the first category of the right kind (0.429476ms)
+✔ resolveAccountId: id, then name, then first account, then a new "Cash" account (2.692647ms)
+✔ create: stores the row and its receipt inside one database transaction (13.359996ms)
+✔ create: no receipt row is written when none is attached (0.373136ms)
+✔ update: omitting the receipt removes the stored one (PUT replaces the whole record) (0.700314ms)
+✔ get/update/delete: unknown ids give 404 (4.614308ms)
+✔ issue: e-mails a 6-digit code and stores only its hash (3.588553ms)
+✔ issue: refuses a new code during the 30 s cooldown (4.792055ms)
+✔ consume: wrong code counts an attempt; right code is consumed (0.819429ms)
+✔ consume: expired, locked and missing codes are rejected (2.550541ms)
+ℹ tests 69
+ℹ suites 0
+ℹ pass 69
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 44969.653622
+ℹ start of coverage report
+ℹ ----------------------------------------------------------------------------------------------
+ℹ file                              | line % | branch % | funcs % | uncovered lines
+ℹ ----------------------------------------------------------------------------------------------
+ℹ src                               |        |          |         | 
+ℹ  app.js                           |  93.10 |    66.67 |  100.00 | 19-20
+ℹ  config                           |        |          |         | 
+ℹ   db.js                           |  92.16 |    83.33 |   75.00 | 41-44
+ℹ   env.js                          | 100.00 |   100.00 |  100.00 | 
+ℹ  container.js                     | 100.00 |   100.00 |  100.00 | 
+ℹ  controllers                      |        |          |         | 
+ℹ   account.controller.js           |  96.49 |    60.00 |  100.00 | 32-33
+ℹ   analytics.controller.js         | 100.00 |    80.00 |  100.00 | 
+ℹ   auth.controller.js              |  91.03 |   100.00 |   85.71 | 37-43
+ℹ   budget.controller.js            | 100.00 |   100.00 |  100.00 | 
+ℹ   category.controller.js          |  90.20 |    71.43 |   83.33 | 23-27
+ℹ   transaction.controller.js       | 100.00 |    60.71 |  100.00 | 
+ℹ   user.controller.js              | 100.00 |    90.00 |   86.67 | 
+ℹ  database                         |        |          |         | 
+ℹ   database.js                     | 100.00 |    66.67 |  100.00 | 
+ℹ   migrator.js                     |  98.22 |    80.95 |  100.00 | 111-113
+ℹ  middleware                       |        |          |         | 
+ℹ   auth.js                         | 100.00 |   100.00 |  100.00 | 
+ℹ   errorHandler.js                 |  58.97 |    36.36 |   66.67 | 1-3 15-17 19-21 23-26 29-31
+ℹ  repositories                     |        |          |         | 
+ℹ   account.repository.js           |  93.75 |    81.25 |   84.62 | 27-29 45-47
+ℹ   base.repository.js              | 100.00 |   100.00 |  100.00 | 
+ℹ   budget.repository.js            | 100.00 |   100.00 |  100.00 | 
+ℹ   category.repository.js          |  83.17 |    66.67 |   83.33 | 14-15 57-62 86-94
+ℹ   receipt.repository.js           | 100.00 |   100.00 |  100.00 | 
+ℹ   transaction.repository.js       |  94.27 |    87.50 |  100.00 | 34-36 38-40 46-48
+ℹ   user.repository.js              |  90.48 |    89.47 |   90.91 | 44-51
+ℹ   verificationCode.repository.js  | 100.00 |    90.00 |  100.00 | 
+ℹ  routes                           |        |          |         | 
+ℹ   index.js                        |  98.18 |   100.00 |   50.00 | 12
+ℹ  services                         |        |          |         | 
+ℹ   account.service.js              | 100.00 |    90.91 |  100.00 | 
+ℹ   analytics.service.js            | 100.00 |   100.00 |  100.00 | 
+ℹ   auth.service.js                 |  92.92 |    70.37 |   88.89 | 33-34 38 63-67
+ℹ   budget.service.js               | 100.00 |   100.00 |  100.00 | 
+ℹ   category.service.js             |  91.46 |    70.59 |   87.50 | 36-37 49-53
+ℹ   export                          |        |          |         | 
+ℹ    csv.renderer.js                | 100.00 |   100.00 |  100.00 | 
+ℹ    export.service.js              | 100.00 |    92.31 |  100.00 | 
+ℹ    pdf.renderer.js                |  97.52 |    90.00 |  100.00 | 105-107
+ℹ    statement.js                   | 100.00 |    80.95 |  100.00 | 
+ℹ   mailer.js                       |   8.70 |   100.00 |    0.00 | 4-12 17-83 88-158
+ℹ   token.service.js                | 100.00 |    83.33 |  100.00 | 
+ℹ   transaction.service.js          |  99.15 |    94.87 |  100.00 | 90
+ℹ   user.service.js                 | 100.00 |    78.95 |  100.00 | 
+ℹ   verificationCode.service.js     |  96.88 |    90.48 |  100.00 | 39-40
+ℹ  utils                            |        |          |         | 
+ℹ   dates.js                        |  73.49 |    76.92 |   83.33 | 41-51 54-61 64-66
+ℹ   http.js                         | 100.00 |   100.00 |  100.00 | 
+ℹ   otp.js                          | 100.00 |   100.00 |  100.00 | 
+ℹ   serializers.js                  | 100.00 |    81.82 |  100.00 | 
+ℹ   validator.js                    |  93.98 |    67.74 |  100.00 | 21-23 39-40
+ℹ ----------------------------------------------------------------------------------------------
+ℹ all files                         |  90.82 |    82.42 |   93.68 | 
+ℹ ----------------------------------------------------------------------------------------------
+ℹ end of coverage report

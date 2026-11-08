@@ -193,47 +193,53 @@ ExpenseMate-Personal-Expense-Manager/
 │   ├── linux/                            # Linux desktop project
 │   ├── pubspec.yaml                      # Flutter project configuration
 │   └── analysis_options.yaml             # Dart lint rules
-├── Backend/                              # Node.js REST API
-│   ├── server.js                         # Server entry point (DB init + listen)
-│   ├── package.json                      # NPM dependencies
-│   ├── .env / .env.example               # Environment configuration
+├── Backend/                              # Node.js REST API (layered: Controller -> Service -> Repository -> Database)
+│   ├── server.js                         # Entry point: apply migrations, build container, listen
+│   ├── package.json                      # NPM dependencies + scripts (migrate, test, demo)
+│   ├── .env.example                      # Configuration template (.env is git-ignored)
 │   ├── Database/
-│   │   └── schema.sql                    # MySQL schema (idempotent, auto-run)
+│   │   └── migrations/                   # Versioned schema: NNN_name.up.sql / .down.sql
+│   │       ├── 001_baseline_schema.up.sql
+│   │       ├── 002_transaction_receipts.up.sql
+│   │       └── 002_transaction_receipts.down.sql
+│   ├── scripts/
+│   │   ├── migrate.js                    # npm run migrate | migrate:status | migrate:down
+│   │   ├── verify-migration.js           # snapshot/verify records around a migration
+│   │   ├── rehearse-migration.js         # full migration rehearsal on a dump copy
+│   │   ├── run-regression.sh             # system tests vs a01-baseline and current code
+│   │   └── demo-server.js                # npm run demo: API on a throwaway MySQL
+│   ├── tests/                            # unit/ integration/ system/ (node --test)
 │   └── src/
-│       ├── app.js                        # Express app setup (middleware + routes)
+│       ├── app.js                        # Express app (middleware + router)
+│       ├── container.js                  # Composition root: wires all layers
 │       ├── config/
-│       │   ├── db.js                     # MySQL connection pool + resilient wrapper
+│       │   ├── db.js                     # createPool(): MySQL pool + transient-error retry
 │       │   └── env.js                    # dotenv config loader
-│       ├── controllers/
-│       │   ├── auth.controller.js        # register, login, verify, forgot/reset
-│       │   ├── user.controller.js        # getMe, updateMe, changePassword, convertCurrency
-│       │   ├── transaction.controller.js # CRUD + list + export
-│       │   ├── category.controller.js    # CRUD + seed defaults
-│       │   ├── budget.controller.js      # list + set budget
-│       │   ├── account.controller.js     # CRUD
-│       │   └── analytics.controller.js   # overview + analytics
-│       ├── routes/
-│       │   ├── index.js                  # Route aggregator (/api prefix)
-│       │   ├── auth.routes.js
-│       │   ├── user.routes.js
-│       │   ├── transaction.routes.js
-│       │   ├── category.routes.js
-│       │   ├── budget.routes.js
-│       │   ├── account.routes.js
-│       │   └── analytics.routes.js
-│       ├── middleware/
-│       │   ├── auth.js                   # JWT verification (requireAuth)
-│       │   └── errorHandler.js           # 404 handler + global error handler
-│       ├── services/
-│       │   ├── codes.js                  # OTP code issuance & consumption
-│       │   ├── export.service.js         # CSV/PDF export generation
+│       ├── database/
+│       │   ├── database.js               # Pool wrapper with transaction(work)
+│       │   └── migrator.js               # Migration runner (checksums, lock, rollback)
+│       ├── controllers/                  # HTTP only: validate input -> service -> JSON
+│       │   ├── auth / user / account / category / transaction / budget / analytics .controller.js
+│       ├── services/                     # Business rules (no SQL)
+│       │   ├── auth / user / account / category / transaction / budget / analytics .service.js
+│       │   ├── token.service.js          # JWT sign/verify
+│       │   ├── verificationCode.service.js # OTP issue/consume rules
+│       │   ├── export/                   # statement.js, csv.renderer.js, pdf.renderer.js, export.service.js
 │       │   └── mailer.js                 # Nodemailer email sending
+│       ├── repositories/                 # The only code that runs SQL
+│       │   ├── user / verificationCode / account / category / transaction / receipt / budget .repository.js
+│       ├── routes/
+│       │   └── index.js                  # One route table (/api prefix)
+│       ├── middleware/
+│       │   ├── auth.js                   # Bearer token -> AuthService.authenticate
+│       │   └── errorHandler.js           # 404 handler + global error handler
 │       └── utils/
 │           ├── dates.js                  # Date helpers (periodRange, parseMonth)
-│           ├── http.js                   # HttpError class + asyncHandler wrapper
+│           ├── http.js                   # HttpError + typed errors + asyncHandler
 │           ├── otp.js                    # OTP generation
-│           ├── serializers.js            # DB row → JSON mappers
+│           ├── serializers.js            # Domain object -> API JSON mappers
 │           └── validator.js              # Request body validation class
+├── Assignment02/                         # Assignment 02 reports, metrics and test evidence
 ├── AGENTS.md                             # AI agent development guidelines
 └── ProjectDescription.md                 # Complete project documentation
 ```
@@ -242,7 +248,7 @@ ExpenseMate-Personal-Expense-Manager/
 
 ## 5. Database Schema
 
-The database **`expensemate_db`** uses InnoDB engine with `utf8mb4` charset. Schema is auto-initialized on server startup when `AUTO_INIT_DB=true`.
+The database **`expensemate_db`** uses InnoDB engine with `utf8mb4` charset. The schema is managed by versioned migrations in `Backend/Database/migrations/` (applied on startup when `AUTO_INIT_DB=true`, or with `npm run migrate`). Since migration 002, receipts are stored in `transaction_receipts` (one row per transaction, `MEDIUMTEXT`) instead of `transactions.receipt_url`; the API still returns `receipt_url`.
 
 ### 5.1 `users` Table
 Stores registered user accounts and their preferences.
@@ -366,8 +372,8 @@ Monthly spending limits per expense category.
 ### 6.1 Server Configuration
 
 - **Entry Point**: `backend/server.js`
-  - Initializes DB schema from `Database/schema.sql` (when `AUTO_INIT_DB=true`)
-  - Tests DB pool connectivity
+  - Applies pending migrations from `Database/migrations/` (when `AUTO_INIT_DB=true`)
+  - Builds the dependency container (`src/container.js`) and tests DB connectivity
   - Starts Express on configured port (default: 5000)
 - **Express App**: `backend/src/app.js`
   - Middleware stack: `helmet` → `cors` → `express.json (10MB limit)` → `express.urlencoded` → `morgan` (dev)
@@ -377,8 +383,8 @@ Monthly spending limits per expense category.
 ### 6.2 Middleware
 
 #### `auth.js` — JWT Authentication
-- **`requireAuth`**: Validates `Authorization: Bearer <token>` header, verifies JWT signature, loads user from DB, attaches `req.user` (`{id, email, email_verified}`)
-- **`signToken(userId)`**: Issues JWT with `sub: userId`, configurable expiry (default: 7 days)
+- **`createRequireAuth({ authService })`**: Reads the `Authorization: Bearer <token>` header and calls `AuthService.authenticate()`, which verifies the JWT (`TokenService`) and loads the user through `UserRepository`; attaches `req.user` (`{id, email, email_verified}`)
+- Tokens are issued by `TokenService.sign(userId)` with `sub: userId` and configurable expiry (default: 7 days)
 
 #### `errorHandler.js` — Error Handling
 - Translates MySQL errors (`ER_DUP_ENTRY` → 409, `ER_ROW_IS_REFERENCED_2` → 409)
@@ -512,11 +518,13 @@ Valid account types: `cash`, `bank`, `card`, `wallet`
 
 ### 6.4 Backend Services
 
-#### `codes.js` — OTP Code Management
-- **`issueCode(user, purpose)`**: Generates 6-digit OTP, stores SHA-256 hash, sends via email. Rate-limited: 60-second cooldown per purpose.
-- **`consumeCode(userId, purpose, code)`**: Validates code hash, checks expiration (10 min) and attempts (max 5). Marks as consumed.
+All business rules live in `src/services/` and reach the database only through `src/repositories/` (see `Assignment02/02_Refactoring_Report.md`).
 
-#### `export.service.js` — Transaction Export
+#### `VerificationCodeService` — OTP Code Management
+- **`issue(user, purpose)`**: Generates 6-digit OTP, stores SHA-256 hash, sends via email. Rate-limited: 30-second cooldown per purpose.
+- **`consume(userId, purpose, code)`**: Validates code hash, checks expiration (10 min) and attempts (max 5). Marks as consumed.
+
+#### `export/` — Transaction Export (`ExportService` + renderers)
 - **CSV Generation**: Headers: ID, Date, Type, Category, Account, Amount, Note, Tags
 - **PDF Generation** (via pdfkit):
   - Branded header with "ExpenseMate" and "Financial Statement & Transaction History"
@@ -895,7 +903,7 @@ Backend configuration via `Backend/.env` (copy `Backend/.env.example`; `.env` is
 | `DB_USER`        | `root`      | MySQL username                                   |
 | `DB_PASSWORD`    | —           | MySQL password                                   |
 | `DB_NAME`        | `expensemate_db` | Database name                                |
-| `AUTO_INIT_DB`   | `true`      | Auto-run schema.sql on startup                   |
+| `AUTO_INIT_DB`   | `true`      | Apply pending migrations on startup              |
 | `JWT_SECRET`     | —           | Secret key for JWT signing                       |
 | `JWT_EXPIRES_IN` | `7d`        | JWT token expiration duration                    |
 | `SMTP_HOST`      | —           | SMTP server hostname                             |
@@ -919,11 +927,13 @@ Frontend configuration:
 
 ### Backend Setup
 ```bash
-cd backend
+cd Backend
 cp .env.example .env          # Configure your DB credentials and JWT secret
 npm install                    # Install dependencies
-npm run db:init                # Initialize database schema (or set AUTO_INIT_DB=true)
+npm run migrate                # Apply database migrations (or set AUTO_INIT_DB=true)
 npm run dev                    # Start with --watch for development
+npm test                       # Unit + integration + system tests (throwaway MySQL, no setup)
+npm run demo                   # Local API on a throwaway MySQL (no .env needed)
 ```
 
 ### Frontend Setup

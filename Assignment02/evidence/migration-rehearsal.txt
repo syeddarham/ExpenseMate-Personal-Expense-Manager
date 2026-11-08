@@ -1,0 +1,45 @@
+== Starting throwaway MySQL server
+== Importing expensemate_db.sql (2739 KB) into rehearsal_10024_1
+
+== Migration status BEFORE (Assignment 01 database, no migration history)
+$ node scripts/migrate.js status
+Database: rehearsal_10024_1 @ <throwaway mysql>
+  001_baseline_schema              PENDING
+  002_transaction_receipts         PENDING
+
+== Snapshot existing records
+$ node scripts/verify-migration.js snapshot /var/folders/qv/k57pds811zv5s0cjj64vn4rr0000gn/T/rehearsal-5qIzni/before.json
+[verify] Snapshot saved to /var/folders/qv/k57pds811zv5s0cjj64vn4rr0000gn/T/rehearsal-5qIzni/before.json: users=3 accounts=15 categories=44 transactions=12 budgets=0 receipts=0 (transactions.receipt_url)
+
+== Apply migrations
+$ node scripts/migrate.js up
+[migrate] Applying 001_baseline_schema ...
+[migrate] Applied 001_baseline_schema in 11 ms
+[migrate] Applying 002_transaction_receipts ...
+[migrate] Applied 002_transaction_receipts in 37 ms
+Applied: 001, 002
+
+== Migration status AFTER
+$ node scripts/migrate.js status
+Database: rehearsal_10024_1 @ <throwaway mysql>
+  001_baseline_schema              applied 2026-11-08T14:37:39.000Z
+  002_transaction_receipts         applied 2026-11-08T14:37:39.000Z
+
+== Verify records against snapshot
+$ node scripts/verify-migration.js verify /var/folders/qv/k57pds811zv5s0cjj64vn4rr0000gn/T/rehearsal-5qIzni/before.json
+[verify] Comparing 2026-11-08T14:37:39.203Z snapshot with current database:
+  PASS  users         before=   3  after=   3  missing=0  changed=0
+  PASS  accounts      before=  15  after=  15  missing=0  changed=0
+  PASS  categories    before=  44  after=  44  missing=0  changed=0
+  PASS  transactions  before=  12  after=  12  missing=0  changed=0
+  PASS  budgets       before=   0  after=   0  missing=0  changed=0
+  PASS  receipts      before=   0  after=   0  missing=0  changed=0
+  INFO  receipts moved: transactions.receipt_url -> transaction_receipts
+[verify] OK - every pre-migration record is present and unchanged.
+
+== Re-run migrations (must be a no-op)
+$ node scripts/migrate.js up
+[migrate] Database is up to date.
+Nothing to apply.
+
+== Rehearsal finished successfully

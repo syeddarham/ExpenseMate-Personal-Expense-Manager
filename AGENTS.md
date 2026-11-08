@@ -6,7 +6,9 @@
 - **Architecture**: Client-Server Architecture
   - **Frontend / Client**: Flutter (Dart)
   - **Backend / REST API**: Node.js + Express
-  - **Database**: MySQL 8 (InnoDB, utf8mb4) via `mysql2/promise` with raw parameterized SQL (no ORM). Schema: `Backend/Database/schema.sql`
+  - **Database**: MySQL 8 (InnoDB, utf8mb4) via `mysql2/promise` with raw parameterized SQL (no ORM). Schema: versioned migrations in `Backend/Database/migrations/` (`npm run migrate`); never edit an applied migration, add a new one.
+  - **Backend layering**: Controller -> Service -> Repository -> Database. Only `src/repositories/` may run SQL; controllers only validate input, call a service and serialise JSON; wiring lives in `src/container.js`. `tests/unit/architecture.test.js` enforces this.
+  - **Tests**: `cd Backend && npm test` (throwaway MySQL, no setup); `cd Frontend && flutter test`.
 - **Primary Modules**:
   - Overview & Dashboard (Balance summary, financial flow, recent activity, quick actions)
   - Expense & Income Logging (Transactions, categories, accounts, receipts/tags)

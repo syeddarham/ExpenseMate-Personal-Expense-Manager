@@ -1,0 +1,68 @@
+# system tests running against: external server in /var/folders/qv/k57pds811zv5s0cjj64vn4rr0000gn/T/expensemate-baseline-XXXXXX.74G7VAIO/Backend
+✔ ST-01 Registration: register -> e-mail code -> verify -> login -> profile (12794.067321ms)
+✔ ST-02 Access control: unverified login is blocked, protected routes need a valid token (526.666381ms)
+✔ ST-03 Password reset: forgot -> code -> reset -> login with the new password only (672.156734ms)
+✔ ST-04 Add Expense / Income: saved, listed, and reflected in balances and the dashboard (271.666175ms)
+✔ ST-05 Edit and delete a transaction (260.890647ms)
+✔ ST-06 Monthly Budget Summary: limits, spending and carry-forward to the next month (259.641722ms)
+✖ [D2] ST-07 Dashboard total budget counts each category once after a limit is changed (274.016807ms)
+✔ ST-08 Categories: create, reject duplicates, protect categories in use, delete unused (241.314407ms)
+✔ ST-09 Analytics: category breakdown percentages and trend match the totals (245.771809ms)
+✔ ST-10 Export: CSV statement is generated without e-mail (395.481788ms)
+✖ [D3] ST-11 Export: account names are filled in and tagged transactions do not crash the export (197.219703ms)
+✖ [D1] ST-12 Receipts: a photographed receipt (base64 image, ~150 KB) is saved and returned (212.530592ms)
+✔ ST-13 Settings: currency change converts every stored amount (248.253036ms)
+✔ ST-15 Profile: update name and preferences, change password, reject a taken e-mail (996.095591ms)
+✔ ST-14 Accounts: create, rename, delete; other users cannot see them (402.786468ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 12
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19283.569323
+
+✖ failing tests:
+
+test at tests/system/workflows.test.js:189:1
+✖ [D2] ST-07 Dashboard total budget counts each category once after a limit is changed (274.016807ms)
+  AssertionError [ERR_ASSERTION]: expected 350 (food, current limit) + 100 (transport)
+  
+  650 !== 450
+  
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 650,
+    expected: 450,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/system/workflows.test.js:265:1
+✖ [D3] ST-11 Export: account names are filled in and tagged transactions do not crash the export (197.219703ms)
+  AssertionError [ERR_ASSERTION]: {"error":{"message":"t.tags.join is not a function"}}
+  
+  500 !== 200
+  
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/system/workflows.test.js:278:1
+✖ [D1] ST-12 Receipts: a photographed receipt (base64 image, ~150 KB) is saved and returned (212.530592ms)
+  AssertionError [ERR_ASSERTION]: {"error":{"message":"Data too long for column 'receipt_url' at row 1","code":"ER_DATA_TOO_LONG"}}
+  
+  500 !== 201
+  
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 201,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

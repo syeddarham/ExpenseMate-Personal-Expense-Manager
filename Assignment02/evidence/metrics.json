@@ -1,0 +1,97 @@
+{
+  "measuredAt": "2026-11-08T14:48:05.319Z",
+  "tools": {
+    "eslint": "eslint@9.39.5",
+    "jscpd": "jscpd@4.0.5"
+  },
+  "backend": {
+    "before": {
+      "files": 28,
+      "nonBlankLines": 1735,
+      "controllerLines": 866,
+      "complexity": {
+        "functions": 94,
+        "average": 3.8,
+        "max": 27,
+        "over10": 6,
+        "top5": [
+          "controllers/transaction.controller.js:13 Async function 'parseTransactionBody' (27)",
+          "controllers/user.controller.js:19 Async arrow function (20)",
+          "controllers/transaction.controller.js:97 Async arrow function (14)",
+          "utils/validator.js:15 Method 'string' (12)",
+          "services/export.service.js:64 Arrow function (11)"
+        ]
+      },
+      "duplication": {
+        "clones": 3,
+        "duplicatedLines": 18,
+        "lines": 1950,
+        "percentage": 0.92
+      },
+      "filesWithDirectDbAccess": [
+        "controllers/account.controller.js",
+        "controllers/analytics.controller.js",
+        "controllers/auth.controller.js",
+        "controllers/budget.controller.js",
+        "controllers/category.controller.js",
+        "controllers/transaction.controller.js",
+        "controllers/user.controller.js",
+        "middleware/auth.js",
+        "services/codes.js",
+        "services/export.service.js",
+        "utils/serializers.js"
+      ]
+    },
+    "after": {
+      "files": 43,
+      "nonBlankLines": 2643,
+      "controllerLines": 355,
+      "complexity": {
+        "functions": 285,
+        "average": 2.19,
+        "max": 12,
+        "over10": 1,
+        "top5": [
+          "utils/validator.js:15 Method 'string' (12)",
+          "controllers/transaction.controller.js:87 Function 'parseListQuery' (10)",
+          "middleware/errorHandler.js:8 Function 'handleError' (10)",
+          "services/user.service.js:26 Async method 'updateProfile' (9)",
+          "database/migrator.js:33 Method 'loadMigrations' (8)"
+        ]
+      },
+      "duplication": {
+        "clones": 2,
+        "duplicatedLines": 15,
+        "lines": 2952,
+        "percentage": 0.51
+      },
+      "filesWithDirectDbAccess": []
+    }
+  },
+  "flutterApiService": {
+    "before": {
+      "nonBlankLines": 598,
+      "tryCatchBlocks": 27,
+      "jsonDecodeCalls": 22,
+      "directHttpCalls": 27,
+      "duplication": {
+        "clones": 4,
+        "duplicatedLines": 33,
+        "lines": 642,
+        "percentage": 5.14
+      }
+    },
+    "after": {
+      "nonBlankLines": 467,
+      "tryCatchBlocks": 6,
+      "jsonDecodeCalls": 1,
+      "directHttpCalls": 0,
+      "duplication": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "lines": 532,
+        "percentage": 0
+      }
+    }
+  }
+}
