@@ -1,17 +1,12 @@
 -- =====================================================================
--- ExpenseMate - Personal Expense Manager
--- MySQL schema (database: expensemate_db)
+-- Migration 001 - Baseline schema (Assignment 01)
 --
--- All SQL for the project lives in this file. It is idempotent and is
--- executed automatically by the Node.js backend on start-up
--- (see backend/src/config/initDb.js) or manually with:  npm run db:init
+-- This is the original Database/schema.sql from Assignment 01, unchanged
+-- except that CREATE DATABASE / USE were removed: the migration runner
+-- creates and selects the database itself (name comes from DB_NAME).
+-- Every statement is CREATE TABLE IF NOT EXISTS, so running it against an
+-- existing Assignment 01 database is a safe no-op ("baseline adoption").
 -- =====================================================================
-
-CREATE DATABASE IF NOT EXISTS expensemate_db
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE expensemate_db;
 
 -- ---------------------------------------------------------------------
 -- users : registered application users and their preferences

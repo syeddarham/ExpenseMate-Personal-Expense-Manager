@@ -1,14 +1,22 @@
 {
   "name": "expensemate-backend",
   "version": "1.0.0",
-  "description": "ExpenseMate - Personal Expense Manager REST API (Node.js + Express + MySQL)",
+  "description": "ExpenseMate - Personal Expense Manager REST API (Node.js + Express + MySQL, layered: Controller -> Service -> Repository)",
   "main": "server.js",
   "private": true,
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "db:init": "node scripts/initDb.js",
-    "test": "node --test tests/"
+    "migrate": "node scripts/migrate.js up",
+    "migrate:status": "node scripts/migrate.js status",
+    "migrate:down": "node scripts/migrate.js down",
+    "db:init": "node scripts/migrate.js up",
+    "migrate:verify": "node scripts/verify-migration.js",
+    "test": "node --test --test-concurrency=1 \"tests/unit/**/*.test.js\" \"tests/integration/**/*.test.js\" \"tests/system/**/*.test.js\"",
+    "test:unit": "node --test \"tests/unit/**/*.test.js\"",
+    "test:integration": "node --test --test-concurrency=1 \"tests/integration/**/*.test.js\"",
+    "test:system": "node --test --test-concurrency=1 \"tests/system/**/*.test.js\"",
+    "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-include=\"src/**\" \"tests/unit/**/*.test.js\" \"tests/integration/**/*.test.js\" \"tests/system/**/*.test.js\""
   },
   "engines": {
     "node": ">=18"
@@ -24,5 +32,9 @@
     "mysql2": "^3.11.0",
     "nodemailer": "^6.9.14",
     "pdfkit": "^0.20.2"
+  },
+  "devDependencies": {
+    "mysql-memory-server": "1.17.0",
+    "supertest": "7.1.4"
   }
 }
