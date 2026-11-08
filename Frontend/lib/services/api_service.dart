@@ -7,8 +7,23 @@ import '../models/transaction.dart';
 import '../models/user.dart';
 
 class ApiService {
-  // Configurable base URL for Node.js + Express backend
-  static String _baseUrl = 'http://213.136.94.160:5000/api';
+  /// Base URL for the Node.js + Express backend, set at build time:
+  ///   flutter run --dart-define=API_BASE_URL=https://api.example.com/api
+  /// Production builds should always use an https:// URL so tokens and
+  /// passwords are encrypted in transit.
+  static const String _defaultBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://213.136.94.160:5000/api',
+  );
+
+  static String _baseUrl = _defaultBaseUrl;
+
+  /// True when requests go over unencrypted HTTP to a non-local host.
+  static bool get isInsecureRemote {
+    final uri = Uri.tryParse(_baseUrl);
+    if (uri == null || uri.scheme != 'http') return false;
+    return !const {'localhost', '127.0.0.1', '10.0.2.2'}.contains(uri.host);
+  }
 
   static String get baseUrl => _baseUrl;
   static set baseUrl(String url) {

@@ -49,5 +49,14 @@ app.*.map.json
 
 **/node_modules/
 /backend/node_modules
-/Backend/node_modulesBackend/.env
+/Backend/node_modules
 Frontend/android/.kotlin/
+
+# Environment files (keep only the placeholder template)
+**/.env
+**/.env.*
+!**/.env.example
+
+# Database dumps (may contain real user data)
+Backend/Database/dump/
+*.sql.gz

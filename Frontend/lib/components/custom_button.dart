@@ -76,7 +76,7 @@ class CustomButton extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Text(
             label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: textColor),
+            style: TextStyle(fontSize: AppFontSize.xl, fontWeight: FontWeight.w600, color: textColor),
           ),
         ],
       );
@@ -84,7 +84,7 @@ class CustomButton extends StatelessWidget {
 
     return Text(
       label,
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: textColor),
+      style: TextStyle(fontSize: AppFontSize.xl, fontWeight: FontWeight.w600, color: textColor),
     );
   }
 }

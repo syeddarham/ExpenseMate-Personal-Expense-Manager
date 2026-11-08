@@ -23,12 +23,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   int _selectedTypeFilter = 0; // 0: All, 1: Expenses, 2: Income
   String? _selectedAccountFilter;
 
-  static const List<List<Color>> _cardGradients = [
-    [Color(0xFF0F172A), Color(0xFF334155)],
-    [Color(0xFF065F46), Color(0xFF10B981)],
-    [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
-    [Color(0xFF581C87), Color(0xFF8B5CF6)],
-  ];
+  static const List<List<Color>> _cardGradients = AppColors.cardGradients;
 
   @override
   void dispose() {
@@ -58,7 +53,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Transaction Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                  const Text('Transaction Details', style: TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700)),
                   IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
                 ],
               ),
@@ -75,7 +70,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     Text(
                       '${isIncome ? "+" : "-"}${AppHelpers.formatCurrency(tx.amount)}',
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: AppFontSize.display,
                         fontWeight: FontWeight.w800,
                         color: isIncome ? AppColors.income : AppColors.expense,
                         fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
@@ -84,7 +79,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     const SizedBox(height: 4),
                     Text(
                       tx.title,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                      style: const TextStyle(fontSize: AppFontSize.xl, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                     ),
                   ],
                 ),
@@ -98,7 +93,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               if (tx.note != null && tx.note!.isNotEmpty) _buildDetailRow('Note', tx.note!),
               if (tx.receiptUrl != null && tx.receiptUrl!.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                const Text('Attached Receipt', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                const Text('Attached Receipt', style: TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
                 const SizedBox(height: 6),
                 Container(
                   width: double.infinity,
@@ -115,7 +110,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       Expanded(
                         child: Text(
                           tx.receiptUrl!.startsWith('data:image') ? 'Captured Photo Receipt' : tx.receiptUrl!,
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primary),
+                          style: TextStyle(fontSize: AppFontSize.md, fontWeight: FontWeight.w600, color: AppColors.primary),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -157,8 +152,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-          Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+          Text(label, style: const TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary)),
+          Text(value, style: const TextStyle(fontSize: AppFontSize.base, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
         ],
       ),
     );
@@ -192,7 +187,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.surfaceMuted,
       appBar: const CustomAppBar(title: 'All Transactions', showBack: true),
       body: SingleChildScrollView(
         child: Column(
@@ -243,11 +238,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                           children: [
                             Text(
                               title,
-                              style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                              style: const TextStyle(color: Colors.white70, fontSize: AppFontSize.md, fontWeight: FontWeight.w500),
                             ),
                             Text(
                               type,
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic, fontSize: 15),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic, fontSize: AppFontSize.lg),
                             ),
                           ],
                         ),
@@ -257,7 +252,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                             AppHelpers.formatCurrency(amount),
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 28,
+                              fontSize: AppFontSize.display,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -0.5,
                               fontFamilyFallback: ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
@@ -267,8 +262,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(userName, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                            const Text('Active', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                            Text(userName, style: const TextStyle(color: Colors.white, fontSize: AppFontSize.base, fontWeight: FontWeight.w600)),
+                            const Text('Active', style: TextStyle(color: Colors.white70, fontSize: AppFontSize.md)),
                           ],
                         ),
                       ],
@@ -311,7 +306,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   onChanged: (val) => setState(() => _searchQuery = val.trim()),
                   decoration: InputDecoration(
                     hintText: 'Search transactions, merchants, notes...',
-                    hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
+                    hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: AppFontSize.md),
                     prefixIcon: const Icon(Icons.search, color: AppColors.textMuted),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
@@ -346,7 +341,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       const SizedBox(width: 8),
                       ActionChip(
                         avatar: Icon(Icons.close, size: 14, color: AppColors.primary),
-                        label: Text('Account: $_selectedAccountFilter', style: TextStyle(fontSize: 12, color: AppColors.primary)),
+                        label: Text('Account: $_selectedAccountFilter', style: TextStyle(fontSize: AppFontSize.sm, color: AppColors.primary)),
                         backgroundColor: AppColors.primaryLight,
                         onPressed: () => setState(() => _selectedAccountFilter = null),
                       ),
@@ -365,11 +360,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 children: [
                   Text(
                     '${filtered.length} Transactions',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                    style: const TextStyle(fontSize: AppFontSize.xl, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                   ),
                   const Text(
                     'Tap to view • Swipe to delete',
-                    style: TextStyle(fontSize: 11, color: AppColors.textMuted),
+                    style: TextStyle(fontSize: AppFontSize.xs, color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -386,12 +381,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       const SizedBox(height: 12),
                       const Text(
                         'No matching transactions',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: AppFontSize.xl, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                       ),
                       const SizedBox(height: 4),
                       const Text(
                         'Try clearing search filters or add a new transaction.',
-                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -457,7 +452,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                         Expanded(
                                           child: Text(
                                             tx.title,
-                                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.lg),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -472,7 +467,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                     const SizedBox(height: 2),
                                     Text(
                                       '${tx.category.name} • ${tx.account} • ${AppHelpers.formatDate(tx.date)}',
-                                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                      style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -484,7 +479,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                 '${isIncome ? "+" : "-"}${AppHelpers.formatCurrency(amt)}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 15,
+                                  fontSize: AppFontSize.lg,
                                   color: isIncome ? AppColors.income : AppColors.expense,
                                   fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
                                 ),
@@ -510,7 +505,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       label: Text(
         label,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: AppFontSize.sm,
           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           color: isSelected ? Colors.white : AppColors.textPrimary,
         ),

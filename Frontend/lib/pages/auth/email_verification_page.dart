@@ -123,7 +123,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Email Verification', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+        title: const Text('Email Verification', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.title)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -141,13 +141,13 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               const SizedBox(height: AppSpacing.md),
               const Text(
                 'Verify Your Email',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                style: TextStyle(fontSize: AppFontSize.heading, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 "We've sent a 6-digit verification code to:\n${widget.email}",
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
+                style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.xl),
 
@@ -163,11 +163,11 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       maxLength: 1,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                      style: const TextStyle(fontSize: AppFontSize.headingSm, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         counterText: '',
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         contentPadding: EdgeInsets.zero,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -195,7 +195,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               if (_secondsRemaining > 0)
                 Text(
                   'You can resend the code in $_secondsRemaining seconds',
-                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  style: const TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary),
                 )
               else
                 TextButton(
@@ -219,7 +219,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               const Text(
                 'Please check your inbox or spam folder for the verification email.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                style: TextStyle(fontSize: AppFontSize.sm, color: AppColors.textMuted),
               ),
             ],
           ),

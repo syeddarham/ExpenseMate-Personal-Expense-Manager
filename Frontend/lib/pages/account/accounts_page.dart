@@ -40,14 +40,14 @@ class _AccountsPageState extends State<AccountsPage> {
   Color _colorForType(String type) {
     switch (type.toLowerCase()) {
       case 'bank':
-        return const Color(0xFF2563EB); // Royal Blue
+        return AppColors.accountBank; // Royal Blue
       case 'card':
-        return const Color(0xFF7C3AED); // Deep Violet
+        return AppColors.accountCard; // Deep Violet
       case 'wallet':
-        return const Color(0xFFEA580C); // Sunset Orange
+        return AppColors.accountWallet; // Sunset Orange
       case 'cash':
       default:
-        return const Color(0xFF059669); // Emerald Green
+        return AppColors.accountCash; // Emerald Green
     }
   }
 
@@ -90,7 +90,7 @@ class _AccountsPageState extends State<AccountsPage> {
                       children: [
                         Text(
                           isEditing ? 'Edit Financial Account' : 'Add Financial Account',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700),
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
@@ -110,7 +110,7 @@ class _AccountsPageState extends State<AccountsPage> {
                         ),
                         child: Text(
                           errorText!,
-                          style: const TextStyle(color: AppColors.expense, fontSize: 13, fontWeight: FontWeight.w600),
+                          style: const TextStyle(color: AppColors.expense, fontSize: AppFontSize.md, fontWeight: FontWeight.w600),
                         ),
                       ),
 
@@ -124,7 +124,7 @@ class _AccountsPageState extends State<AccountsPage> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Account Type Selection
-                    const Text('ACCOUNT TYPE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary)),
+                    const Text('ACCOUNT TYPE', style: TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w700, color: AppColors.textSecondary)),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
@@ -140,7 +140,7 @@ class _AccountsPageState extends State<AccountsPage> {
                             style: TextStyle(
                               color: isSel ? Colors.white : AppColors.textPrimary,
                               fontWeight: isSel ? FontWeight.w700 : FontWeight.w500,
-                              fontSize: 12,
+                              fontSize: AppFontSize.sm,
                             ),
                           ),
                           selectedColor: color,
@@ -166,7 +166,7 @@ class _AccountsPageState extends State<AccountsPage> {
                         child: Text(
                           expenseState.currencySymbol,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: AppFontSize.title,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primary,
                           ),
@@ -325,13 +325,13 @@ class _AccountsPageState extends State<AccountsPage> {
                     const SizedBox(height: AppSpacing.md),
                     const Text(
                       'No Financial Accounts Found',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                      style: TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'Create custom accounts such as Cash, Bank, Credit Card, or Digital Wallets to track your balances.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: AppFontSize.md),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     CustomButton(
@@ -377,7 +377,7 @@ class _AccountsPageState extends State<AccountsPage> {
                           children: [
                             Text(
                               acc.name,
-                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.lg),
                             ),
                             const SizedBox(height: 4),
                             Row(
@@ -390,13 +390,13 @@ class _AccountsPageState extends State<AccountsPage> {
                                   ),
                                   child: Text(
                                     acc.type.toUpperCase(),
-                                    style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w800),
+                                    style: TextStyle(color: color, fontSize: AppFontSize.xxs, fontWeight: FontWeight.w800),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Opening: ${AppHelpers.formatCurrency(acc.openingBalance)}',
-                                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                  style: const TextStyle(fontSize: AppFontSize.xs, color: AppColors.textSecondary),
                                 ),
                               ],
                             ),
@@ -410,7 +410,7 @@ class _AccountsPageState extends State<AccountsPage> {
                             AppHelpers.formatCurrency(acc.balance),
                             style: TextStyle(
                               fontWeight: FontWeight.w800,
-                              fontSize: 16,
+                              fontSize: AppFontSize.xl,
                               color: acc.balance >= 0 ? AppColors.textPrimary : AppColors.expense,
                             ),
                           ),

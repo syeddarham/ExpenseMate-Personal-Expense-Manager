@@ -109,7 +109,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 const Text(
                   'Create Your Account',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: AppFontSize.display,
                     fontWeight: FontWeight.w800,
                     color: AppColors.textPrimary,
                     letterSpacing: -0.5,
@@ -118,7 +118,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: AppSpacing.xs),
                 const Text(
                   'Start your journey toward smarter money management.',
-                  style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.xl),
 
@@ -190,7 +190,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const Expanded(
                       child: Text(
                         'I agree to the Terms of Service and Privacy Policy',
-                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary),
                       ),
                     ),
                   ],
@@ -211,7 +211,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   children: [
                     const Text(
                       'Already have an account? ',
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: AppFontSize.base),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
@@ -219,7 +219,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         'Sign In',
                         style: TextStyle(
                           color: AppColors.primary,
-                          fontSize: 14,
+                          fontSize: AppFontSize.base,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

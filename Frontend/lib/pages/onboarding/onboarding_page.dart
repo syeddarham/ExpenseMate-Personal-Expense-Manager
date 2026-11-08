@@ -59,7 +59,7 @@ class OnboardingPage extends StatelessWidget {
                 'Take Control of Your Money',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: AppFontSize.headingLg,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                   letterSpacing: -0.5,
@@ -70,7 +70,7 @@ class OnboardingPage extends StatelessWidget {
                 'Track your daily expenses, monitor your income, and understand exactly where your money goes.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: AppFontSize.base,
                   color: AppColors.textSecondary,
                   height: 1.5,
                 ),
@@ -94,7 +94,7 @@ class OnboardingPage extends StatelessWidget {
                 'By joining you agree to our Terms of Services and Privacy Policy',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: AppFontSize.xs,
                   color: AppColors.textMuted,
                 ),
               ),

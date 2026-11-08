@@ -46,14 +46,14 @@ class TransactionCard extends StatelessWidget {
           transaction.title,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 15,
+            fontSize: AppFontSize.lg,
             color: AppColors.textPrimary,
           ),
         ),
         subtitle: Text(
           '${transaction.account} • ${AppHelpers.formatFriendlyDate(transaction.date)}',
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: AppFontSize.sm,
             color: AppColors.textSecondary,
           ),
         ),
@@ -61,7 +61,7 @@ class TransactionCard extends StatelessWidget {
           '$amountPrefix${AppHelpers.formatCurrency(transaction.amount)}',
           style: TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 15,
+            fontSize: AppFontSize.lg,
             color: amountColor,
           ),
         ),

@@ -111,7 +111,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Reset Password', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+        title: const Text('Reset Password', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.title)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -129,12 +129,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               const SizedBox(height: AppSpacing.md),
               const Text(
                 'Create New Password',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                style: TextStyle(fontSize: AppFontSize.heading, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 'Enter the 6-digit code sent to ${widget.email} and choose a new password.',
-                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
+                style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.xl),
 
@@ -193,7 +193,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Strong Password', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                    const Text('Strong Password', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.md)),
                     const SizedBox(height: 8),
                     _buildRequirementRow('Minimum 8 character', hasMinLength),
                     _buildRequirementRow('Uppercase and lowercase character', hasUpperLower),
@@ -230,7 +230,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           Text(
             text,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: AppFontSize.sm,
               color: isMet ? AppColors.textPrimary : AppColors.textSecondary,
               fontWeight: isMet ? FontWeight.w600 : FontWeight.normal,
             ),

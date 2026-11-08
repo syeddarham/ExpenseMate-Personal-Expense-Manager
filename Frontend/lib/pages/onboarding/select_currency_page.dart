@@ -44,7 +44,7 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Select Currency', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+        title: const Text('Select Currency', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.title)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -61,12 +61,12 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
             children: [
               const Text(
                 'Select Your Currency',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                style: TextStyle(fontSize: AppFontSize.heading, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
               ),
               const SizedBox(height: AppSpacing.xs),
               const Text(
                 'Choose your preferred base currency for transactions and analytics.',
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.md),
 
@@ -82,7 +82,7 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                   onChanged: (val) => setState(() => _searchQuery = val),
                   decoration: InputDecoration(
                     hintText: 'Search currency or code...',
-                    hintStyle: const TextStyle(fontSize: 14, color: AppColors.textMuted),
+                    hintStyle: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textMuted),
                     prefixIcon: const Icon(Icons.search, color: AppColors.textMuted, size: 20),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
@@ -128,12 +128,12 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                               height: 46,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primary.withAlpha(25) : const Color(0xFFF3F4F6),
+                                color: isSelected ? AppColors.primary.withAlpha(25) : AppColors.chip,
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
                                 curr['flag'] ?? '🌐',
-                                style: const TextStyle(fontSize: 26),
+                                style: const TextStyle(fontSize: AppFontSize.headingLg),
                               ),
                             ),
                             const SizedBox(width: AppSpacing.md),
@@ -146,7 +146,7 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                                       Text(
                                         curr['code']!,
                                         style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: AppFontSize.xl,
                                           fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
                                           color: AppColors.textPrimary,
                                         ),
@@ -155,13 +155,13 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: isSelected ? AppColors.primary : const Color(0xFFE5E7EB),
+                                          color: isSelected ? AppColors.primary : AppColors.borderLight,
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           curr['symbol'] ?? '',
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: AppFontSize.sm,
                                             fontWeight: FontWeight.w700,
                                             color: isSelected ? Colors.white : AppColors.textPrimary,
                                           ),
@@ -172,7 +172,7 @@ class _SelectCurrencyPageState extends State<SelectCurrencyPage> {
                                   const SizedBox(height: 2),
                                   Text(
                                     curr['name']!,
-                                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                    style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary),
                                   ),
                                 ],
                               ),

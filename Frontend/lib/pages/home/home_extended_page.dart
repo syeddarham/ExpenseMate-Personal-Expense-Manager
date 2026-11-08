@@ -30,7 +30,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
     final monthTitle = '${_monthNames[now.month - 1]}, ${now.year}';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.surfaceMuted,
       appBar: CustomAppBar(title: monthTitle, showBack: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -54,17 +54,17 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
                     children: [
                       const Text(
                         'Monthly Spend',
-                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFECFDF5),
+                          color: AppColors.incomeLight,
                           borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                         ),
                         child: const Text(
                           'Tracked',
-                          style: TextStyle(color: AppColors.income, fontWeight: FontWeight.w700, fontSize: 12),
+                          style: TextStyle(color: AppColors.income, fontWeight: FontWeight.w700, fontSize: AppFontSize.sm),
                         ),
                       ),
                     ],
@@ -75,7 +75,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
                     child: Text(
                       AppHelpers.formatCurrency(totalExpense),
                       style: const TextStyle(
-                        fontSize: 32,
+                        fontSize: AppFontSize.displayLg,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
                         letterSpacing: -0.5,
@@ -104,7 +104,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
                                 if (index >= 0 && index < labels.length) {
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 6),
-                                    child: Text(labels[index], style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                                    child: Text(labels[index], style: const TextStyle(fontSize: AppFontSize.xxs, color: AppColors.textMuted)),
                                   );
                                 }
                                 return const SizedBox.shrink();
@@ -143,7 +143,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
             // History Section
             const Text(
               'History',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+              style: TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
             ),
             const SizedBox(height: AppSpacing.sm),
 
@@ -230,7 +230,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isIncome ? AppColors.primaryLight : const Color(0xFFFEE2E2),
+              color: isIncome ? AppColors.primaryLight : AppColors.expenseSoft,
               borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
             ),
             child: Icon(
@@ -244,8 +244,8 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.base)),
+                Text(subtitle, style: const TextStyle(fontSize: AppFontSize.xs, color: AppColors.textSecondary)),
               ],
             ),
           ),
@@ -253,7 +253,7 @@ class _HomeExtendedPageState extends State<HomeExtendedPage> {
             '${isIncome ? "+" : "-"}${AppHelpers.formatCurrency(amount)}',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: 15,
+              fontSize: AppFontSize.lg,
               color: isIncome ? AppColors.income : AppColors.expense,
               fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
             ),

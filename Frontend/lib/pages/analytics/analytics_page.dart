@@ -54,11 +54,11 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               children: [
                 const Text(
                   'Spending by Category',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  style: TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
                 Text(
                   '${categorySpending.length} Categories',
-                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  style: const TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -101,15 +101,15 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(cat.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                            Text(cat.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.base)),
                             Text('${pct.toStringAsFixed(1)}% of total',
-                                style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                                style: const TextStyle(fontSize: AppFontSize.xs, color: AppColors.textSecondary)),
                           ],
                         ),
                       ),
                       Text(
                         AppHelpers.formatCurrency(amt),
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.textPrimary),
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.lg, color: AppColors.textPrimary),
                       ),
                     ],
                   ),
@@ -146,7 +146,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 child: Text(
                   _filters[index],
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: AppFontSize.md,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
                   ),
@@ -173,10 +173,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Spending Distribution', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+              const Text('Spending Distribution', style: TextStyle(fontSize: AppFontSize.base, fontWeight: FontWeight.w700)),
               Text(
                 'Total: ${AppHelpers.formatCurrency(totalExpense)}',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primaryDark),
+                style: TextStyle(fontSize: AppFontSize.md, fontWeight: FontWeight.w600, color: AppColors.primaryDark),
               ),
             ],
           ),
@@ -218,11 +218,11 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                     children: [
                       const Text(
                         'Total',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: AppFontSize.xs, color: AppColors.textSecondary),
                       ),
                       Text(
                         AppHelpers.formatCurrency(totalExpense),
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                        style: const TextStyle(fontSize: AppFontSize.lg, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
                       ),
                     ],
                   ),
@@ -377,10 +377,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_trendTitle, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+              Text(_trendTitle, style: const TextStyle(fontSize: AppFontSize.base, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
               Text(
                 'Total: ${AppHelpers.formatCurrency(values.fold(0.0, (s, v) => s + v))}',
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                style: const TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -394,12 +394,12 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    getTooltipColor: (_) => const Color(0xFF1E293B),
+                    getTooltipColor: (_) => AppColors.darkSurface,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final label = groupIndex < labels.length ? labels[groupIndex] : '';
                       return BarTooltipItem(
                         '$label\n${AppHelpers.formatCurrency(rod.toY)}',
-                        const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12),
+                        const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: AppFontSize.sm),
                       );
                     },
                   ),

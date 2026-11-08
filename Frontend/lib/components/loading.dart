@@ -21,7 +21,7 @@ class CustomLoading extends StatelessWidget {
             Text(
               message!,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: AppFontSize.base,
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),

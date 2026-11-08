@@ -20,7 +20,7 @@
    - 6.5 [Backend Utilities](#65-backend-utilities)
 7. [Frontend (Flutter)](#7-frontend-flutter)
    - 7.1 [App Entry & Theme](#71-app-entry--theme)
-   - 7.2 [Screens (22 Pages)](#72-screens-22-pages)
+   - 7.2 [Screens (21 Pages)](#72-screens-21-pages)
    - 7.3 [Reusable Components](#73-reusable-components)
    - 7.4 [Models](#74-models)
    - 7.5 [Services](#75-services)
@@ -153,10 +153,8 @@ ExpenseMate-Personal-Expense-Manager/
 │   │   │   │   └── categories_page.dart  # Category CRUD management
 │   │   │   ├── account/
 │   │   │   │   └── accounts_page.dart    # Account CRUD management
-│   │   │   ├── profile/
-│   │   │   │   └── profile_page.dart     # User profile & settings
-│   │   │   └── login/
-│   │   │       └── login_page.dart       # Legacy/alternative login page
+│   │   │   └── profile/
+│   │   │       └── profile_page.dart     # User profile & settings
 │   │   ├── components/                   # Reusable UI widgets
 │   │   │   ├── custom_button.dart
 │   │   │   ├── custom_text_field.dart
@@ -580,7 +578,7 @@ Maps database rows to consistent API JSON format:
 - Transparent AppBar with no elevation
 - Custom `DialogTheme`, `BottomSheetTheme`, `CardTheme` for consistent white backgrounds
 
-### 7.2 Screens (22 Pages)
+### 7.2 Screens (21 Pages)
 
 | # | Screen Name | File | Description |
 |---|-------------|------|-------------|
@@ -604,8 +602,7 @@ Maps database rows to consistent API JSON format:
 | 18 | Analytics | `pages/analytics/analytics_page.dart` | Spending analytics with period selector (Day/Week/Month/Year), trend line/bar charts, category breakdown with percentages |
 | 19 | Categories | `pages/category/categories_page.dart` | Category management with create/edit/delete. Icon picker grid, color picker grid. Separate expense/income tabs |
 | 20 | Accounts | `pages/account/accounts_page.dart` | Account CRUD management. Add/edit account name, type, opening balance. Delete confirmation |
-| 21 | Profile | `pages/profile/profile_page.dart` | User profile with avatar (image upload), name/email editing, currency change, primary color theme picker, dark mode toggle, biometric toggle, password change, CSV/PDF export, logout |
-| 22 | Login Page | `pages/login/login_page.dart` | Alternative/legacy login page |
+| 21 | Profile | `pages/profile/profile_page.dart` | User profile with avatar (image upload), name/email editing, currency change, primary color theme picker, dark mode toggle, biometric toggle, password change, CSV/PDF export, logout (returns to the Auth screen) |
 
 ### 7.3 Reusable Components
 
@@ -678,7 +675,7 @@ class Account {
 
 #### `ApiService` (`services/api_service.dart`)
 Static HTTP client class. Manages all REST API communication:
-- **Base URL**: `http://localhost:5000/api` (configurable)
+- **Base URL**: set at build time with `--dart-define=API_BASE_URL=...` (see API Base URL Configuration)
 - **Token Management**: Static `_token` field, `setToken()`, `clearToken()`, auto-attached as `Bearer` header
 - **Methods** (all static, return parsed Dart objects):
   - `checkHealth()` — Health check with 3s timeout
@@ -887,7 +884,7 @@ Sign In → Forgot Password → POST /auth/forgot-password → OTP email
 
 ## 12. Environment Variables
 
-Backend configuration via `backend/.env`:
+Backend configuration via `Backend/.env` (copy `Backend/.env.example`; `.env` is git-ignored and must never be committed):
 
 | Variable         | Default     | Description                                      |
 |------------------|-------------|--------------------------------------------------|
@@ -908,7 +905,7 @@ Backend configuration via `backend/.env`:
 | `SMTP_FROM`      | `ExpenseMate <no-reply@expensemate.app>` | Email sender address |
 
 Frontend configuration:
-- **API Base URL**: `ApiService.baseUrl` — defaults to `http://localhost:5000/api`, configurable at runtime
+- **API Base URL**: `--dart-define=API_BASE_URL=<url>` at build time (falls back to the current dev server); `ApiService.baseUrl` can still be overridden at runtime
 
 ---
 
@@ -938,10 +935,12 @@ flutter run -d chrome          # Run on web
 ```
 
 ### API Base URL Configuration
-By default, the Flutter app connects to `http://localhost:5000/api`. For physical devices, update `ApiService.baseUrl` to your machine's local IP:
-```dart
-ApiService.baseUrl = 'http://192.168.x.x:5000/api';
+Pass the backend URL at build time:
+```bash
+flutter run --dart-define=API_BASE_URL=http://192.168.x.x:5000/api          # local dev on a physical device
+flutter build apk --dart-define=API_BASE_URL=https://api.yourdomain.com/api  # production (HTTPS only)
 ```
+Without the flag the app falls back to the current development server over plain HTTP, and prints a warning at startup. Production builds must point at an HTTPS endpoint (e.g. Express behind nginx/Caddy with a Let's Encrypt certificate) so credentials and JWTs are encrypted in transit.
 
 ---
 

@@ -39,7 +39,7 @@ class AuthPage extends StatelessWidget {
                 'Welcome\nto\nExpenseMate',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: AppFontSize.displayLg,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                   height: 1.2,
@@ -50,7 +50,7 @@ class AuthPage extends StatelessWidget {
                 'Get started now and take control of your finances with ease!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: AppFontSize.base,
                   color: AppColors.textSecondary,
                 ),
               ),

@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const Text(
               'ExpenseMate',
               style: TextStyle(
-                fontSize: 32,
+                fontSize: AppFontSize.displayLg,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
                 letterSpacing: -0.5,
@@ -70,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const Text(
               'Track smarter. Spend better.',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: AppFontSize.base,
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),

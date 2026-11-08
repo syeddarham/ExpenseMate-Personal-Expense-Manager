@@ -78,7 +78,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       children: [
                         Text(
                           'Add ${_selectedType == TransactionType.expense ? "Expense" : "Income"} Category',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700),
                         ),
                         IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
                       ],
@@ -104,7 +104,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                           Expanded(
                             child: Text(
                               nameController.text.trim().isEmpty ? 'Category Name' : nameController.text.trim(),
-                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.lg),
                             ),
                           ),
                         ],
@@ -113,7 +113,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     const SizedBox(height: AppSpacing.md),
 
                     if (errorText != null) ...[
-                      Text(errorText!, style: const TextStyle(color: AppColors.expense, fontSize: 12, fontWeight: FontWeight.w600)),
+                      Text(errorText!, style: const TextStyle(color: AppColors.expense, fontSize: AppFontSize.sm, fontWeight: FontWeight.w600)),
                       const SizedBox(height: AppSpacing.sm),
                     ],
 
@@ -127,7 +127,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Icon selector
-                    const Text('Icon', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('Icon', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md)),
                     const SizedBox(height: 6),
                     SizedBox(
                       height: 90,
@@ -150,7 +150,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                             onTap: () => setModalState(() => selectedIcon = iconName),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: isSelected ? selectedColor.withAlpha(40) : const Color(0xFFF9FAFB),
+                                color: isSelected ? selectedColor.withAlpha(40) : AppColors.surfaceMuted,
                                 borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                                 border: Border.all(color: isSelected ? selectedColor : AppColors.border, width: isSelected ? 2 : 1),
                               ),
@@ -163,7 +163,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Color selector
-                    const Text('Color', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('Color', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md)),
                     const SizedBox(height: 6),
                     SizedBox(
                       height: 40,
@@ -328,7 +328,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               children: [
                 const Text(
                   'Select Category',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                  style: TextStyle(fontSize: AppFontSize.base, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.push(
@@ -337,7 +337,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   ),
                   child: Text(
                     'Manage Categories',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
+                    style: TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w600, color: AppColors.primary),
                   ),
                 ),
               ],
@@ -396,14 +396,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                               const SizedBox(width: 4),
                               Text(
                                 'Receipt Photo Attached',
-                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.primary),
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.md, color: AppColors.primary),
                               ),
                             ],
                           ),
                           const SizedBox(height: 2),
                           Text(
                             _receiptName ?? 'Receipt image attached',
-                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                            style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -468,7 +468,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       Text(
                         'Add Receipt / Invoice Attachment',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: AppFontSize.md,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,
                         ),
@@ -566,13 +566,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Amount', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+          const Text('Amount', style: TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary)),
           Row(
             children: [
               Text(
                 Provider.of<ExpenseState>(context).currencySymbol,
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: AppFontSize.display,
                   fontWeight: FontWeight.w700,
                   color: _selectedType == TransactionType.expense ? AppColors.expense : AppColors.income,
                   fontFamilyFallback: const ['Segoe UI', 'Roboto', 'Noto Sans', 'Arial'],
@@ -583,7 +583,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 child: TextField(
                   controller: _amountController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  style: const TextStyle(fontSize: AppFontSize.display, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                   decoration: const InputDecoration(
                     hintText: '0.00',
                     hintStyle: TextStyle(color: AppColors.textMuted),
@@ -616,7 +616,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             onTap: _showQuickAddCategoryModal,
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
+                color: AppColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                 border: Border.all(
                   color: AppColors.primary.withAlpha(120),
@@ -631,7 +631,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     'Add New',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: AppFontSize.xxs,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,
                     ),
@@ -664,7 +664,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   cat.name,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: AppFontSize.xxs,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     color: AppColors.textPrimary,
                   ),
@@ -690,13 +690,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              const Text('Account', style: TextStyle(fontSize: AppFontSize.base, fontWeight: FontWeight.w600)),
               GestureDetector(
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const AccountsPage()),
                 ),
-                child: Text('+ Add', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary)),
+                child: Text('+ Add', style: TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w600, color: AppColors.primary)),
               ),
             ],
           ),
@@ -717,7 +717,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 children: [
                   Icon(Icons.add_circle_outline, size: 16, color: AppColors.primary),
                   const SizedBox(width: 6),
-                  Text('Add Account', style: TextStyle(fontSize: 13, color: AppColors.primary, fontWeight: FontWeight.w600)),
+                  Text('Add Account', style: TextStyle(fontSize: AppFontSize.md, color: AppColors.primary, fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
@@ -736,13 +736,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            const Text('Account', style: TextStyle(fontSize: AppFontSize.base, fontWeight: FontWeight.w600)),
             GestureDetector(
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const AccountsPage()),
               ),
-              child: Text('Manage', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary)),
+              child: Text('Manage', style: TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w600, color: AppColors.primary)),
             ),
           ],
         ),
@@ -761,7 +761,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               items: accountList.map((acc) {
                 return DropdownMenuItem(
                   value: acc,
-                  child: Text(acc, style: const TextStyle(fontSize: 13), overflow: TextOverflow.ellipsis),
+                  child: Text(acc, style: const TextStyle(fontSize: AppFontSize.md), overflow: TextOverflow.ellipsis),
                 );
               }).toList(),
               onChanged: (val) {
@@ -778,7 +778,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Date', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        const Text('Date', style: TextStyle(fontSize: AppFontSize.base, fontWeight: FontWeight.w600)),
         const SizedBox(height: AppSpacing.xs),
         GestureDetector(
           onTap: () async {
@@ -804,7 +804,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               children: [
                 Text(
                   AppHelpers.formatDate(_selectedDate),
-                  style: const TextStyle(fontSize: 13),
+                  style: const TextStyle(fontSize: AppFontSize.md),
                 ),
                 const Icon(Icons.calendar_today, size: 16, color: AppColors.textSecondary),
               ],

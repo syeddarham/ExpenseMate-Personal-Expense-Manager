@@ -63,7 +63,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Forgot Password', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+        title: const Text('Forgot Password', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.title)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -81,12 +81,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               const SizedBox(height: AppSpacing.md),
               const Text(
                 'Forgot Your Password?',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                style: TextStyle(fontSize: AppFontSize.heading, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
               ),
               const SizedBox(height: AppSpacing.xs),
               const Text(
                 "No worries. Enter your email address and we'll send you a code to reset your password.",
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
+                style: TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.xl),
 

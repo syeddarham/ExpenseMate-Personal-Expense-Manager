@@ -39,7 +39,7 @@ class PasswordResetSuccessPage extends StatelessWidget {
                 'Password Updated!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: AppFontSize.headingLg,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                 ),
@@ -49,7 +49,7 @@ class PasswordResetSuccessPage extends StatelessWidget {
                 'Your password has been changed successfully. You can now sign in with your new password.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: AppFontSize.base,
                   color: AppColors.textSecondary,
                   height: 1.5,
                 ),

@@ -49,12 +49,12 @@ class BudgetProgressBar extends StatelessWidget {
               Expanded(
                 child: Text(
                   budget.title,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.lg),
                 ),
               ),
               Text(
                 '$percentageText%',
-                style: TextStyle(fontWeight: FontWeight.w700, color: statusColor, fontSize: 14),
+                style: TextStyle(fontWeight: FontWeight.w700, color: statusColor, fontSize: AppFontSize.base),
               ),
             ],
           ),
@@ -74,11 +74,11 @@ class BudgetProgressBar extends StatelessWidget {
             children: [
               Text(
                 'Spent: ${AppHelpers.formatCurrency(budget.spentAmount)}',
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary),
               ),
               Text(
                 'Limit: ${AppHelpers.formatCurrency(budget.limitAmount)}',
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                style: const TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
               ),
             ],
           ),

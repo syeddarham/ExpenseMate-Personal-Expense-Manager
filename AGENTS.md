@@ -6,16 +6,17 @@
 - **Architecture**: Client-Server Architecture
   - **Frontend / Client**: Flutter (Dart)
   - **Backend / REST API**: Node.js + Express
-  - **Database**: PostgreSQL (Driver / ORM)
+  - **Database**: MySQL 8 (InnoDB, utf8mb4) via `mysql2/promise` with raw parameterized SQL (no ORM). Schema: `Backend/Database/schema.sql`
 - **Primary Modules**:
   - Overview & Dashboard (Balance summary, financial flow, recent activity, quick actions)
   - Expense & Income Logging (Transactions, categories, accounts, receipts/tags)
   - Budget Management (Monthly budgets, category limits, visual indicators, alerts)
   - Analytics & Financial Insights (Breakdown charts, trends, time filters)
   - Accounts & Settings (Financial accounts, profile, themes, currency, security, CSV/PDF export)
+- **Repository Layout**: `Frontend/` (Flutter app, paths below are relative to it), `Backend/` (Express API), `Documentation/` (SRS, reports, diagrams).
 
-## 2. Figma UI Design System & 20 Screens Specification
-The Figma design file (`KcaQXksBAagWhnB7UMEX1j`) consists of exactly 20 screens that must be implemented in the Flutter frontend:
+## 2. Figma UI Design System & Screens Specification
+The Figma design file (`KcaQXksBAagWhnB7UMEX1j`) consists of 20 screens that must be implemented in the Flutter frontend:
 
 1. **01_SplashScreen** (`lib/pages/onboarding/splash_page.dart`): App logo, branding ("ExpenseMate", "Track smarter. Spend better.").
 2. **02_Onboarding** (`lib/pages/onboarding/onboarding_page.dart`): Hero finance illustration, "Take Control of Your Money", Terms notice, "Next" button.
@@ -37,6 +38,13 @@ The Figma design file (`KcaQXksBAagWhnB7UMEX1j`) consists of exactly 20 screens 
 18. **18_Transactions Screen** (`lib/pages/transaction/transactions_screen.dart`): Multi-card balance carousel ($102,432.43 / $87,453.43), detailed transaction list with +/- indicators.
 19. **19_Scan Screen** (`lib/pages/scan/scan_screen.dart`): Receipt / QR code camera scanning viewfinder with tabs (QR, Expense, Bill).
 20. **20_Add Transaction Screen** (`lib/pages/transaction/add_transaction_page.dart`): Expense/Income toggle, large amount ($46.80), Category, Wallet, Date, Note, Add Receipt attachment, Save button.
+
+Additional app screens (not in the Figma file, built to match its design system):
+- **Analytics** (`lib/pages/analytics/analytics_page.dart`): Spending breakdown and trends with day/week/month/year filters.
+- **Budgets** (`lib/pages/budget/budget_page.dart`): Monthly category limits, progress bars, exceeded/near-limit alerts.
+- **Categories** (`lib/pages/category/categories_page.dart`): Create, edit and delete income/expense categories.
+- **Accounts** (`lib/pages/account/accounts_page.dart`): Cash, bank, card and wallet accounts with balances.
+- **Profile & Settings** (`lib/pages/profile/profile_page.dart`): Profile, password, accent color, currency, CSV/PDF export, logout (returns to `AuthPage`).
 
 ## 3. Standard Flutter Project Structure
 When cloning UI screens and components from Figma, **always strictly adhere to the following directory layout**:
@@ -67,8 +75,14 @@ lib/
 │   │   └── add_transaction_page.dart
 │   ├── scan/
 │   │   └── scan_screen.dart
+│   ├── analytics/
+│   │   └── analytics_page.dart
 │   ├── budget/
 │   │   └── budget_page.dart
+│   ├── category/
+│   │   └── categories_page.dart
+│   ├── account/
+│   │   └── accounts_page.dart
 │   └── profile/
 │       └── profile_page.dart
 ├── components/
@@ -81,24 +95,33 @@ lib/
 ├── services/
 │   ├── api_service.dart
 │   ├── auth_service.dart
+│   ├── currency_service.dart
 │   └── expense_state.dart
 ├── models/
 │   ├── user.dart
+│   ├── account.dart
 │   ├── transaction.dart
 │   ├── budget.dart
 │   └── category.dart
 └── utils/
-    ├── constants.dart
-    └── helpers.dart
+    ├── constants.dart       # AppColors, AppSpacing, AppFontSize, AppShadows
+    ├── helpers.dart
+    ├── countries_data.dart
+    └── currencies_data.dart
 ```
 
-## 3. Figma UI Cloning Rules
+## 4. Figma UI Cloning Rules
 1. **Design System Consistency**:
    - Extract colors, font sizes, paddings, and radii into `lib/utils/constants.dart` or `ThemeData` in `lib/app.dart`.
-   - Never hardcode raw hex colors or magic numbers across individual widget files.
+   - Use `AppColors.*` for colors, `AppFontSize.*` for font sizes, `AppSpacing.*` for padding/radii and `AppShadows.*` for shadows.
+   - Never hardcode raw hex colors or magic numbers across individual widget files. If a value is missing, add a token to `constants.dart` first.
 2. **Component Reusability**:
    - Reusable Figma elements (buttons, cards, inputs, navigation bars) must be placed in `lib/components/`.
    - Screen-level compositions belong strictly in `lib/pages/<feature>/`.
 3. **Clean Architecture**:
    - Keep UI widgets free of direct HTTP logic; delegate network and storage calls to `lib/services/`.
    - Parse payloads using strong typing in `lib/models/`.
+
+## 5. Configuration & Secrets
+- **Backend**: copy `Backend/.env.example` to `Backend/.env` and fill in real values. `.env` files and `Backend/Database/dump/` are git-ignored; never commit credentials or database dumps.
+- **Frontend API URL**: set at build time with `--dart-define=API_BASE_URL=https://<host>/api` (see `lib/services/api_service.dart`). Never hardcode server addresses elsewhere. Production builds must use HTTPS.

@@ -58,7 +58,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       children: [
                         Text(
                           isEditing ? 'Edit Category' : 'New Category',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700),
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
@@ -93,13 +93,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               children: [
                                 Text(
                                   nameController.text.trim().isEmpty ? 'Category Preview' : nameController.text.trim(),
-                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.xl),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   isExpense ? 'Expense Category' : 'Income Category',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: AppFontSize.sm,
                                     fontWeight: FontWeight.w600,
                                     color: isExpense ? AppColors.expense : AppColors.income,
                                   ),
@@ -116,7 +116,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFEF2F2),
+                          color: AppColors.expenseLight,
                           borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                           border: Border.all(color: AppColors.expense),
                         ),
@@ -127,7 +127,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             Expanded(
                               child: Text(
                                 errorMessage!,
-                                style: const TextStyle(color: AppColors.expense, fontSize: 12, fontWeight: FontWeight.w500),
+                                style: const TextStyle(color: AppColors.expense, fontSize: AppFontSize.sm, fontWeight: FontWeight.w500),
                               ),
                             ),
                           ],
@@ -147,12 +147,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Type Toggle (Expense vs Income)
-                    const Text('Category Type', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    const Text('Category Type', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                     const SizedBox(height: 8),
                     Container(
                       height: 44,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF3F4F6),
+                        color: AppColors.chip,
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                       ),
                       child: Row(
@@ -171,7 +171,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   style: TextStyle(
                                     color: isExpense ? Colors.white : AppColors.textSecondary,
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 13,
+                                    fontSize: AppFontSize.md,
                                   ),
                                 ),
                               ),
@@ -191,7 +191,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   style: TextStyle(
                                     color: !isExpense ? Colors.white : AppColors.textSecondary,
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 13,
+                                    fontSize: AppFontSize.md,
                                   ),
                                 ),
                               ),
@@ -203,7 +203,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Icon Selector
-                    const Text('Select Icon', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    const Text('Select Icon', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                     const SizedBox(height: 8),
                     SizedBox(
                       height: 120,
@@ -226,7 +226,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             onTap: () => setModalState(() => selectedIcon = iconName),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: isSelected ? selectedColor.withAlpha(40) : const Color(0xFFF9FAFB),
+                                color: isSelected ? selectedColor.withAlpha(40) : AppColors.surfaceMuted,
                                 borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                                 border: Border.all(
                                   color: isSelected ? selectedColor : AppColors.border,
@@ -246,7 +246,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Color Selector
-                    const Text('Select Color', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    const Text('Select Color', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                     const SizedBox(height: 8),
                     SizedBox(
                       height: 44,
@@ -373,21 +373,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEF2F2),
+                  color: AppColors.expenseLight,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                 ),
                 child: const Icon(Icons.delete_outline, color: AppColors.expense, size: 24),
               ),
               const SizedBox(width: AppSpacing.sm),
               const Expanded(
-                child: Text('Delete Category', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+                child: Text('Delete Category', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.title)),
               ),
             ],
           ),
           content: Text(
             'Are you sure you want to delete "${category.name}"?\n\n'
             'Note: You cannot delete a category if it has active transactions logged under it.',
-            style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary),
           ),
           actions: [
             TextButton(
@@ -482,7 +482,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     hintText: 'Search categories...',
                     prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary, size: 20),
                     filled: true,
-                    fillColor: const Color(0xFFF9FAFB),
+                    fillColor: AppColors.surfaceMuted,
                     contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -525,12 +525,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         const SizedBox(height: 12),
                         const Text(
                           'No categories found',
-                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AppColors.textPrimary),
+                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.xl, color: AppColors.textPrimary),
                         ),
                         const SizedBox(height: 6),
                         const Text(
                           'Tap + to create a custom category.',
-                          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: AppFontSize.md),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         ElevatedButton.icon(
@@ -579,7 +579,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                 children: [
                                   Text(
                                     cat.name,
-                                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.textPrimary),
+                                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.lg, color: AppColors.textPrimary),
                                   ),
                                   const SizedBox(height: 4),
                                   Row(
@@ -587,13 +587,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: cat.isExpense ? const Color(0xFFFEF2F2) : const Color(0xFFECFDF5),
+                                          color: cat.isExpense ? AppColors.expenseLight : AppColors.incomeLight,
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           cat.isExpense ? 'Expense' : 'Income',
                                           style: TextStyle(
-                                            fontSize: 11,
+                                            fontSize: AppFontSize.xs,
                                             fontWeight: FontWeight.w700,
                                             color: cat.isExpense ? AppColors.expense : AppColors.income,
                                           ),
@@ -609,7 +609,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                           ),
                                           child: Text(
                                             'Budgeted',
-                                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
+                                            style: TextStyle(fontSize: AppFontSize.xs, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
                                           ),
                                         ),
                                       ],
@@ -648,13 +648,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : const Color(0xFFF3F4F6),
+          color: isSelected ? AppColors.primary : AppColors.chip,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
         ),
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: AppFontSize.sm,
             fontWeight: FontWeight.w600,
             color: isSelected ? Colors.white : AppColors.textSecondary,
           ),

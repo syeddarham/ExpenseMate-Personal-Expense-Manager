@@ -40,7 +40,7 @@ class _CitizenshipPageState extends State<CitizenshipPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Citizenship', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+        title: const Text('Citizenship', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.title)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -53,12 +53,12 @@ class _CitizenshipPageState extends State<CitizenshipPage> {
             children: [
               const Text(
                 'Select Your Country',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                style: TextStyle(fontSize: AppFontSize.heading, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
               ),
               const SizedBox(height: AppSpacing.xs),
               const Text(
                 'Please select your citizenship or primary residence country.',
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.md),
 
@@ -74,7 +74,7 @@ class _CitizenshipPageState extends State<CitizenshipPage> {
                   onChanged: (val) => setState(() => _searchQuery = val),
                   decoration: InputDecoration(
                     hintText: 'Search country or code...',
-                    hintStyle: const TextStyle(fontSize: 14, color: AppColors.textMuted),
+                    hintStyle: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textMuted),
                     prefixIcon: const Icon(Icons.search, color: AppColors.textMuted, size: 20),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
@@ -98,7 +98,7 @@ class _CitizenshipPageState extends State<CitizenshipPage> {
                     ? Center(
                         child: Text(
                           'No country found for "$_searchQuery"',
-                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                          style: const TextStyle(color: AppColors.textSecondary, fontSize: AppFontSize.base),
                         ),
                       )
                     : ListView.separated(
@@ -122,13 +122,13 @@ class _CitizenshipPageState extends State<CitizenshipPage> {
                         ),
                         child: Row(
                           children: [
-                            Text(country['flag']!, style: const TextStyle(fontSize: 22)),
+                            Text(country['flag']!, style: const TextStyle(fontSize: AppFontSize.headingSm)),
                             const SizedBox(width: AppSpacing.md),
                             Expanded(
                               child: Text(
                                 country['name']!,
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: AppFontSize.lg,
                                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                   color: AppColors.textPrimary,
                                 ),

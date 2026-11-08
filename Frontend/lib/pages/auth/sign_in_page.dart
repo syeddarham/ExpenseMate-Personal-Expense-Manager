@@ -108,7 +108,7 @@ class _SignInPageState extends State<SignInPage> {
                 const Text(
                   'Welcome Back!',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: AppFontSize.display,
                     fontWeight: FontWeight.w800,
                     color: AppColors.textPrimary,
                     letterSpacing: -0.5,
@@ -117,7 +117,7 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: AppSpacing.xs),
                 const Text(
                   'Sign in to continue managing your finances.',
-                  style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: AppFontSize.base, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.xl),
 
@@ -161,7 +161,7 @@ class _SignInPageState extends State<SignInPage> {
                           activeColor: AppColors.primary,
                           onChanged: (val) => setState(() => _rememberMe = val ?? true),
                         ),
-                        const Text('Remember Me', style: TextStyle(fontSize: 13)),
+                        const Text('Remember Me', style: TextStyle(fontSize: AppFontSize.md)),
                       ],
                     ),
                     GestureDetector(
@@ -174,7 +174,7 @@ class _SignInPageState extends State<SignInPage> {
                       child: Text(
                         'Forget Password?',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: AppFontSize.md,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,
                         ),
@@ -198,7 +198,7 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     const Text(
                       'Don’t have an account? ',
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: AppFontSize.base),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -211,7 +211,7 @@ class _SignInPageState extends State<SignInPage> {
                         'Create Account',
                         style: TextStyle(
                           color: AppColors.primary,
-                          fontSize: 14,
+                          fontSize: AppFontSize.base,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

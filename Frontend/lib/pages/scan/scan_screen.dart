@@ -98,12 +98,12 @@ class _ScanScreenState extends State<ScanScreen> {
                       const SizedBox(height: 12),
                       const Text(
                         'Align Receipt in Frame',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                        style: TextStyle(color: Colors.white, fontSize: AppFontSize.xl, fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: 4),
                       const Text(
                         'Take a photo or upload an image below',
-                        style: TextStyle(color: Colors.white60, fontSize: 12),
+                        style: TextStyle(color: Colors.white60, fontSize: AppFontSize.sm),
                       ),
                     ],
                   ),
@@ -192,7 +192,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 const SizedBox(height: 12),
                 const Text(
                   'Tap Shutter to Capture • Tap Gallery to Upload',
-                  style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.w500),
+                  style: TextStyle(color: Colors.white54, fontSize: AppFontSize.sm, fontWeight: FontWeight.w500),
                 ),
               ],
             ),

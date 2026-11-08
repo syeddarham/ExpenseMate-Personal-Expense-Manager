@@ -14,7 +14,7 @@ import '../../utils/constants.dart';
 import '../../utils/currencies_data.dart';
 import '../account/accounts_page.dart';
 import '../category/categories_page.dart';
-import '../login/login_page.dart';
+import '../auth/auth_page.dart';
 
 /// Screen 06: Profile & Account Settings
 class ProfilePage extends StatefulWidget {
@@ -166,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: AppSpacing.md),
                 const Text(
                   'Profile Picture',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 ListTile(
@@ -179,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Icon(Icons.photo_library_outlined, color: AppColors.primary, size: 20),
                   ),
                   title: const Text('Choose from Device / Gallery', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('JPG, PNG, or WEBP image', style: TextStyle(fontSize: 12)),
+                  subtitle: const Text('JPG, PNG, or WEBP image', style: TextStyle(fontSize: AppFontSize.sm)),
                   onTap: () {
                     Navigator.pop(ctx);
                     _pickAndUploadPfp();
@@ -190,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: const BoxDecoration(
-                        color: Color(0xFFFEE2E2),
+                        color: AppColors.expenseSoft,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.delete_outline, color: AppColors.expense, size: 20),
@@ -238,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(width: AppSpacing.sm),
                   const Text(
                     'Edit Profile',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.textPrimary),
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: AppFontSize.title, color: AppColors.textPrimary),
                   ),
                 ],
               ),
@@ -246,25 +246,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Full Name', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                  const Text('Full Name', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameCtrl,
-                    style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+                    style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: const Color(0xFFF8FAFC),
+                      fillColor: AppColors.background,
                       hintText: 'Your full name',
-                      hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
-                      prefixIcon: const Icon(Icons.person_outline, size: 19, color: Color(0xFF64748B)),
+                      hintStyle: const TextStyle(fontSize: AppFontSize.input, color: AppColors.textMuted, fontWeight: FontWeight.w400),
+                      prefixIcon: const Icon(Icons.person_outline, size: 19, color: AppColors.textSecondary),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        borderSide: const BorderSide(color: AppColors.border),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        borderSide: const BorderSide(color: AppColors.border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -273,26 +273,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  const Text('Email Address', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                  const Text('Email Address', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: emailCtrl,
                     keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+                    style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: const Color(0xFFF8FAFC),
+                      fillColor: AppColors.background,
                       hintText: 'your.email@example.com',
-                      hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
-                      prefixIcon: const Icon(Icons.mail_outline, size: 19, color: Color(0xFF64748B)),
+                      hintStyle: const TextStyle(fontSize: AppFontSize.input, color: AppColors.textMuted, fontWeight: FontWeight.w400),
+                      prefixIcon: const Icon(Icons.mail_outline, size: 19, color: AppColors.textSecondary),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        borderSide: const BorderSide(color: AppColors.border),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        borderSide: const BorderSide(color: AppColors.border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -401,7 +401,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Icon(Icons.lock_reset, color: AppColors.primary, size: 20),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  const Text('Change Password', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.textPrimary)),
+                  const Text('Change Password', style: TextStyle(fontWeight: FontWeight.w800, fontSize: AppFontSize.title, color: AppColors.textPrimary)),
                 ],
               ),
               content: SingleChildScrollView(
@@ -409,30 +409,30 @@ class _ProfilePageState extends State<ProfilePage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Current Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    const Text('Current Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: currentPassCtrl,
                       obscureText: obscureCurrent,
-                      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+                      style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFFF8FAFC),
+                        fillColor: AppColors.background,
                         hintText: 'Current password',
-                        hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
-                        prefixIcon: const Icon(Icons.lock_outline, size: 19, color: Color(0xFF64748B)),
+                        hintStyle: const TextStyle(fontSize: AppFontSize.input, color: AppColors.textMuted, fontWeight: FontWeight.w400),
+                        prefixIcon: const Icon(Icons.lock_outline, size: 19, color: AppColors.textSecondary),
                         suffixIcon: IconButton(
-                          icon: Icon(obscureCurrent ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: const Color(0xFF64748B)),
+                          icon: Icon(obscureCurrent ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: AppColors.textSecondary),
                           onPressed: () => setDlgState(() => obscureCurrent = !obscureCurrent),
                         ),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -441,30 +441,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    const Text('New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    const Text('New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: newPassCtrl,
                       obscureText: obscureNew,
-                      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+                      style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFFF8FAFC),
+                        fillColor: AppColors.background,
                         hintText: 'New password (min 6 chars)',
-                        hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
-                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 19, color: Color(0xFF64748B)),
+                        hintStyle: const TextStyle(fontSize: AppFontSize.input, color: AppColors.textMuted, fontWeight: FontWeight.w400),
+                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 19, color: AppColors.textSecondary),
                         suffixIcon: IconButton(
-                          icon: Icon(obscureNew ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: const Color(0xFF64748B)),
+                          icon: Icon(obscureNew ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: AppColors.textSecondary),
                           onPressed: () => setDlgState(() => obscureNew = !obscureNew),
                         ),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -473,30 +473,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    const Text('Confirm New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    const Text('Confirm New Password', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md, color: AppColors.textPrimary)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: confirmPassCtrl,
                       obscureText: obscureConfirm,
-                      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+                      style: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFFF8FAFC),
+                        fillColor: AppColors.background,
                         hintText: 'Confirm new password',
-                        hintStyle: const TextStyle(fontSize: 13.5, color: Color(0xFF94A3B8), fontWeight: FontWeight.w400),
-                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 19, color: Color(0xFF64748B)),
+                        hintStyle: const TextStyle(fontSize: AppFontSize.input, color: AppColors.textMuted, fontWeight: FontWeight.w400),
+                        prefixIcon: const Icon(Icons.vpn_key_outlined, size: 19, color: AppColors.textSecondary),
                         suffixIcon: IconButton(
-                          icon: Icon(obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: const Color(0xFF64748B)),
+                          icon: Icon(obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 19, color: AppColors.textSecondary),
                           onPressed: () => setDlgState(() => obscureConfirm = !obscureConfirm),
                         ),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -609,12 +609,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: AppSpacing.md),
                 const Text(
                   'Choose App Primary Color',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                  style: TextStyle(fontSize: AppFontSize.titleLg, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 const Text(
                   'Select your preferred accent color for buttons, charts, and highlights across the entire app.',
-                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 GridView.builder(
@@ -649,7 +649,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isSelected ? color.withAlpha(25) : const Color(0xFFF9FAFB),
+                          color: isSelected ? color.withAlpha(25) : AppColors.surfaceMuted,
                           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                           border: Border.all(
                             color: isSelected ? color : AppColors.border,
@@ -682,7 +682,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               name,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: AppFontSize.xs,
                                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                 color: isSelected ? color : AppColors.textPrimary,
                               ),
@@ -731,7 +731,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   const Expanded(
-                    child: Text('Export Transactions', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.textPrimary)),
+                    child: Text('Export Transactions', style: TextStyle(fontWeight: FontWeight.w800, fontSize: AppFontSize.title, color: AppColors.textPrimary)),
                   ),
                 ],
               ),
@@ -741,7 +741,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   const Text(
                     'Select export format:',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.textPrimary),
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.md, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -753,7 +753,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: format == 'pdf' ? AppColors.primaryLight : const Color(0xFFF3F4F6),
+                              color: format == 'pdf' ? AppColors.primaryLight : AppColors.chip,
                               borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                               border: Border.all(
                                 color: format == 'pdf' ? AppColors.primary : Colors.transparent,
@@ -769,7 +769,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: TextStyle(
                                     fontWeight: format == 'pdf' ? FontWeight.w700 : FontWeight.w500,
                                     color: format == 'pdf' ? AppColors.primary : AppColors.textPrimary,
-                                    fontSize: 13,
+                                    fontSize: AppFontSize.md,
                                   ),
                                 ),
                               ],
@@ -785,7 +785,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: format == 'csv' ? AppColors.primaryLight : const Color(0xFFF3F4F6),
+                              color: format == 'csv' ? AppColors.primaryLight : AppColors.chip,
                               borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                               border: Border.all(
                                 color: format == 'csv' ? AppColors.primary : Colors.transparent,
@@ -801,7 +801,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: TextStyle(
                                     fontWeight: format == 'csv' ? FontWeight.w700 : FontWeight.w500,
                                     color: format == 'csv' ? AppColors.primary : AppColors.textPrimary,
-                                    fontSize: 13,
+                                    fontSize: AppFontSize.md,
                                   ),
                                 ),
                               ],
@@ -815,16 +815,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.sm),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF9FAFB),
+                      color: AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                       border: Border.all(color: AppColors.border),
                     ),
                     child: SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Send copy to my email', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                      title: const Text('Send copy to my email', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md)),
                       subtitle: Text(
                         'Will send ${format.toUpperCase()} directly to $userEmail',
-                        style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: const TextStyle(fontSize: AppFontSize.xs, color: AppColors.textSecondary),
                       ),
                       value: sendEmail,
                       activeColor: AppColors.primary,
@@ -941,12 +941,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: AppSpacing.md),
                   const Text(
                     'Select Currency',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                    style: TextStyle(fontSize: AppFontSize.titleLg, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   const Text(
                     'Choose a currency for your accounts, transactions, and budgets.',
-                    style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                    style: TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   TextField(
@@ -955,7 +955,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       prefixIcon: const Icon(Icons.search, size: 20, color: AppColors.textMuted),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       filled: true,
-                      fillColor: const Color(0xFFF9FAFB),
+                      fillColor: AppColors.surfaceMuted,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                         borderSide: const BorderSide(color: AppColors.border),
@@ -993,12 +993,12 @@ class _ProfilePageState extends State<ProfilePage> {
                               height: 44,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primary.withAlpha(25) : const Color(0xFFF3F4F6),
+                                color: isSelected ? AppColors.primary.withAlpha(25) : AppColors.chip,
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
                                 curr['flag'] ?? '🌐',
-                                style: const TextStyle(fontSize: 26),
+                                style: const TextStyle(fontSize: AppFontSize.headingLg),
                               ),
                             ),
                             title: Row(
@@ -1008,20 +1008,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: TextStyle(
                                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
                                     color: AppColors.textPrimary,
-                                    fontSize: 15,
+                                    fontSize: AppFontSize.lg,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: isSelected ? AppColors.primary : const Color(0xFFE5E7EB),
+                                    color: isSelected ? AppColors.primary : AppColors.borderLight,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     symbol,
                                     style: TextStyle(
-                                      fontSize: 11,
+                                      fontSize: AppFontSize.xs,
                                       fontWeight: FontWeight.w700,
                                       color: isSelected ? Colors.white : AppColors.textPrimary,
                                     ),
@@ -1032,19 +1032,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFECFDF5),
+                                      color: AppColors.incomeLight,
                                       borderRadius: BorderRadius.circular(4),
                                       border: Border.all(color: AppColors.primary),
                                     ),
                                     child: Text(
                                       'Active',
-                                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.primaryDark),
+                                      style: TextStyle(fontSize: AppFontSize.xxs, fontWeight: FontWeight.w800, color: AppColors.primaryDark),
                                     ),
                                   ),
                                 ],
                               ],
                             ),
-                            subtitle: Text(name, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                            subtitle: Text(name, style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary)),
                             trailing: isSelected
                                 ? Icon(Icons.check_circle, color: AppColors.primary, size: 22)
                                 : null,
@@ -1152,7 +1152,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Expanded(
                     child: Text(
                       'Change Currency',
-                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: AppFontSize.title),
                     ),
                   ),
                 ],
@@ -1164,7 +1164,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text(
                       'Switching from $fromCode ($fromSymbol) to $toCode ($toSymbol)',
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary),
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.base, color: AppColors.textPrimary),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
@@ -1173,7 +1173,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(AppSpacing.md),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
+                        color: AppColors.surfaceMuted,
                         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                         border: Border.all(color: AppColors.border),
                       ),
@@ -1182,7 +1182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
                                 SizedBox(width: 12),
-                                Text('Fetching live exchange rate...', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                                Text('Fetching live exchange rate...', style: TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary)),
                               ],
                             )
                           : (exchangeRate != null
@@ -1195,7 +1195,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         const SizedBox(width: 6),
                                         Text(
                                           'Live Rate: 1 $fromCode = ${exchangeRate!.toStringAsFixed(4)} $toCode',
-                                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.primaryDark),
+                                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.md, color: AppColors.primaryDark),
                                         ),
                                       ],
                                     ),
@@ -1204,20 +1204,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                       'Example: If you had $fromSymbol 1.00 in your account:\n'
                                       '• Converted: $toSymbol ${(1.0 * exchangeRate!).toStringAsFixed(2)}\n'
                                       '• Stay Same Amount: $toSymbol 1.00',
-                                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.4),
+                                      style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary, height: 1.4),
                                     ),
                                   ],
                                 )
                               : Text(
                                   errorMessage ?? 'Live rate unavailable',
-                                  style: const TextStyle(fontSize: 12, color: AppColors.expense),
+                                  style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.expense),
                                 )),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
                     const Text(
                       'How would you like to handle your existing balances, transactions, and budgets?',
-                      style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -1360,7 +1360,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ? Text(
                                       initials.isNotEmpty ? initials : 'EM',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: AppFontSize.titleLg,
                                         fontWeight: FontWeight.w700,
                                         color: AppColors.primaryDark,
                                       ),
@@ -1397,7 +1397,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Text(
                           userName,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: AppFontSize.title,
                             fontWeight: FontWeight.w700,
                             color: isDark ? Colors.white : AppColors.textPrimary,
                           ),
@@ -1405,7 +1405,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 2),
                         Text(
                           userEmail,
-                          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                          style: const TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -1498,7 +1498,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 expenseState.clear();
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  MaterialPageRoute(builder: (_) => const AuthPage()),
                   (route) => false,
                 );
               },
@@ -1526,7 +1526,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Text(
           title,
           style: const TextStyle(
-            fontSize: 13,
+            fontSize: AppFontSize.md,
             fontWeight: FontWeight.w600,
             color: AppColors.textSecondary,
             letterSpacing: 0.5,
@@ -1553,8 +1553,8 @@ class _ProfilePageState extends State<ProfilePage> {
       child: ListTile(
         onTap: onTap,
         leading: Icon(icon, color: AppColors.textPrimary, size: 22),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
-        subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)) : null,
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.base, color: AppColors.textPrimary)),
+        subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary)) : null,
         trailing: trailingWidget ?? const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 20),
       ),
     );

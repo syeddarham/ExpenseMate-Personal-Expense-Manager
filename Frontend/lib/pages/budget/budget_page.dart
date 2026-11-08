@@ -59,7 +59,7 @@ class _BudgetPageState extends State<BudgetPage> {
                           const SizedBox(width: 10),
                           Text(
                             '${budget.title} Limit',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                            style: const TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),
@@ -72,7 +72,7 @@ class _BudgetPageState extends State<BudgetPage> {
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     'Current spent: ${AppHelpers.formatCurrency(budget.spentAmount)}',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: AppFontSize.md),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   CustomTextField(
@@ -85,7 +85,7 @@ class _BudgetPageState extends State<BudgetPage> {
                       child: Text(
                         expenseState.currencySymbol,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: AppFontSize.title,
                           fontWeight: FontWeight.w700,
                           color: AppColors.primary,
                         ),
@@ -132,7 +132,7 @@ class _BudgetPageState extends State<BudgetPage> {
                         );
                       },
                       icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.expense),
-                      label: const Text('Remove Budget Limit', style: TextStyle(color: AppColors.expense, fontSize: 12)),
+                      label: const Text('Remove Budget Limit', style: TextStyle(color: AppColors.expense, fontSize: AppFontSize.sm)),
                     ),
                   ),
                 ],
@@ -191,7 +191,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     children: [
                       const Text(
                         'Set Category Budget',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -200,7 +200,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  const Text('Select Expense Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                  const Text('Select Expense Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md)),
                   const SizedBox(height: 8),
 
                   // Category Selector Dropdown
@@ -209,7 +209,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.border),
                       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                      color: const Color(0xFFF9FAFB),
+                      color: AppColors.surfaceMuted,
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
@@ -226,7 +226,7 @@ class _BudgetPageState extends State<BudgetPage> {
                                   child: Icon(c.icon, size: 14, color: c.color),
                                 ),
                                 const SizedBox(width: 10),
-                                Text(c.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                                Text(c.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.base)),
                               ],
                             ),
                           );
@@ -257,7 +257,7 @@ class _BudgetPageState extends State<BudgetPage> {
                       child: Text(
                         expenseState.currencySymbol,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: AppFontSize.title,
                           fontWeight: FontWeight.w700,
                           color: AppColors.primary,
                         ),
@@ -361,14 +361,14 @@ class _BudgetPageState extends State<BudgetPage> {
                 children: [
                   const Text(
                     'Overall Monthly Budget',
-                    style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                    style: TextStyle(color: Colors.white70, fontSize: AppFontSize.md, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '${AppHelpers.formatCurrency(totalSpent)} / ${AppHelpers.formatCurrency(totalBudget)}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 26,
+                      fontSize: AppFontSize.headingLg,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -388,11 +388,11 @@ class _BudgetPageState extends State<BudgetPage> {
                     children: [
                       Text(
                         '${(overallProgress * 100).toStringAsFixed(1)}% consumed',
-                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                        style: const TextStyle(color: Colors.white, fontSize: AppFontSize.sm, fontWeight: FontWeight.w600),
                       ),
                       Text(
                         '${AppHelpers.formatCurrency((totalBudget - totalSpent).clamp(0.0, totalBudget))} left',
-                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                        style: const TextStyle(color: Colors.white70, fontSize: AppFontSize.sm),
                       ),
                     ],
                   ),
@@ -406,7 +406,7 @@ class _BudgetPageState extends State<BudgetPage> {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: exceededBudgets.isNotEmpty ? const Color(0xFFFEF2F2) : const Color(0xFFFFFBEB),
+                  color: exceededBudgets.isNotEmpty ? AppColors.expenseLight : AppColors.warningLight,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                   border: Border.all(
                     color: exceededBudgets.isNotEmpty ? AppColors.expense : AppColors.warning,
@@ -426,9 +426,9 @@ class _BudgetPageState extends State<BudgetPage> {
                             ? 'Warning: You have exceeded budget for ${exceededBudgets.map((b) => b.title).join(", ")}!'
                             : 'Attention: ${warningBudgets.map((b) => b.title).join(", ")} approaching spending limit (85%+)!',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: AppFontSize.sm,
                           fontWeight: FontWeight.w600,
-                          color: exceededBudgets.isNotEmpty ? AppColors.expense : const Color(0xFFB45309),
+                          color: exceededBudgets.isNotEmpty ? AppColors.expense : AppColors.warningDark,
                         ),
                       ),
                     ),
@@ -444,12 +444,12 @@ class _BudgetPageState extends State<BudgetPage> {
               children: [
                 const Text(
                   'Category Budgets',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  style: TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
                 TextButton.icon(
                   onPressed: () => _showSetCategoryBudgetModal(context),
                   icon: const Icon(Icons.add, size: 16),
-                  label: const Text('Add Limit', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                  label: const Text('Add Limit', style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFontSize.md)),
                 ),
               ],
             ),
@@ -476,7 +476,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     const SizedBox(height: 4),
                     const Text(
                       'Pick any of your categories and set a monthly spending limit.',
-                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.md),

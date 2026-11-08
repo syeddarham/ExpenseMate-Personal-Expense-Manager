@@ -33,7 +33,7 @@ class CustomTextField extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: AppFontSize.base,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
@@ -45,10 +45,10 @@ class CustomTextField extends StatelessWidget {
           keyboardType: keyboardType,
           validator: validator,
           onChanged: onChanged,
-          style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
+          style: const TextStyle(fontSize: AppFontSize.lg, color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(fontSize: 14, color: AppColors.textMuted),
+            hintStyle: const TextStyle(fontSize: AppFontSize.base, color: AppColors.textMuted),
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             filled: true,

@@ -186,15 +186,15 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(tx.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-                        Text(tx.category.name, style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                        Text(tx.title, style: const TextStyle(fontSize: AppFontSize.title, fontWeight: FontWeight.w700)),
+                        Text(tx.category.name, style: const TextStyle(fontSize: AppFontSize.md, color: AppColors.textSecondary)),
                       ],
                     ),
                   ),
                   Text(
                     '${tx.isExpense ? "-" : "+"}${AppHelpers.formatCurrency(tx.amount)}',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: AppFontSize.title,
                       fontWeight: FontWeight.w800,
                       color: tx.isExpense ? AppColors.expense : AppColors.income,
                     ),
@@ -219,8 +219,8 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: AppFontSize.md)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: AppFontSize.md)),
         ],
       ),
     );
@@ -266,11 +266,11 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text(
                   'Hello, $userName 👋',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  style: const TextStyle(fontSize: AppFontSize.xl, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
                 const Text(
                   'Welcome to ExpenseMate',
-                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: AppFontSize.sm, color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -298,7 +298,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+          colors: [AppColors.darkBackground, AppColors.darkSurface],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -313,7 +313,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               const Text(
                 'Total Balance',
-                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13, fontWeight: FontWeight.w500),
+                style: TextStyle(color: AppColors.textMuted, fontSize: AppFontSize.md, fontWeight: FontWeight.w500),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -325,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.calendar_today_rounded, size: 12, color: Colors.white),
                     SizedBox(width: 4),
-                    Text('This Month', style: TextStyle(color: Colors.white, fontSize: 11)),
+                    Text('This Month', style: TextStyle(color: Colors.white, fontSize: AppFontSize.xs)),
                   ],
                 ),
               ),
@@ -336,7 +336,7 @@ class _HomePageState extends State<HomePage> {
             AppHelpers.formatCurrency(totalBalance),
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 32,
+              fontSize: AppFontSize.displayLg,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.5,
             ),
@@ -367,10 +367,10 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Income', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11)),
+                            const Text('Income', style: TextStyle(color: AppColors.textMuted, fontSize: AppFontSize.xs)),
                             Text(
                               AppHelpers.formatCurrency(totalIncome),
-                              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                              style: const TextStyle(color: Colors.white, fontSize: AppFontSize.md, fontWeight: FontWeight.w700),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -404,10 +404,10 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Expense', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11)),
+                            const Text('Expense', style: TextStyle(color: AppColors.textMuted, fontSize: AppFontSize.xs)),
                             Text(
                               AppHelpers.formatCurrency(totalExpense),
-                              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                              style: const TextStyle(color: Colors.white, fontSize: AppFontSize.md, fontWeight: FontWeight.w700),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -453,13 +453,13 @@ class _HomePageState extends State<HomePage> {
         _buildActionItem(
           icon: Icons.bar_chart_rounded,
           label: 'Analytics',
-          color: const Color(0xFF06B6D4),
+          color: AppColors.cyan,
           onTap: () => setState(() => _currentIndex = 1),
         ),
         _buildActionItem(
           icon: Icons.account_circle_outlined,
           label: 'Profile',
-          color: const Color(0xFF8B5CF6),
+          color: AppColors.violet,
           onTap: () => setState(() => _currentIndex = 3),
         ),
       ],
@@ -489,7 +489,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 6),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+            style: const TextStyle(fontSize: AppFontSize.sm, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
           ),
         ],
       ),
@@ -505,7 +505,7 @@ class _HomePageState extends State<HomePage> {
             const Text(
               'Recent Transactions',
               style: TextStyle(
-                fontSize: 17,
+                fontSize: AppFontSize.xlPlus,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
               ),
@@ -519,7 +519,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Text(
                 '$count',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
+                style: TextStyle(fontSize: AppFontSize.xs, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
               ),
             ),
           ],
@@ -540,7 +540,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   'All Transactions',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: AppFontSize.md,
                     fontWeight: FontWeight.w700,
                     color: AppColors.primary,
                   ),
