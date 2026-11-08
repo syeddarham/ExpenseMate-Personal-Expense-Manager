@@ -307,6 +307,34 @@ test('ST-13 Settings: currency change converts every stored amount', async () =>
   assert.equal(budget.limit_amount, 100);
 });
 
+test('ST-15 Profile: update name and preferences, change password, reject a taken e-mail', async () => {
+  const u = await newUser();
+  const other = await newUser('Other');
+
+  const updated = await api('PUT', '/users/me', {
+    token: u.token,
+    body: { name: 'Renamed User', primary_color: '#2563EB', country: 'Pakistan', preferred_currency: 'pkr', currency_symbol: 'Rs', dark_mode: true },
+  });
+  assert.equal(updated.status, 200, JSON.stringify(updated.body));
+  assert.equal(updated.body.user.name, 'Renamed User');
+  assert.equal(updated.body.user.primary_color, '#2563EB');
+  assert.equal(updated.body.user.country, 'Pakistan');
+  assert.equal(updated.body.user.preferred_currency, 'PKR');
+  assert.equal(updated.body.user.dark_mode, true);
+
+  const taken = await api('PUT', '/users/me', { token: u.token, body: { email: other.email } });
+  assert.equal(taken.status, 409);
+
+  const badName = await api('PUT', '/users/me', { token: u.token, body: { full_name: 'x' } });
+  assert.equal(badName.status, 400);
+
+  const wrong = await api('PUT', '/users/me/password', { token: u.token, body: { current_password: 'nope', new_password: 'Another789!' } });
+  assert.equal(wrong.status, 400);
+  const changed = await api('PUT', '/users/me/password', { token: u.token, body: { current_password: PASSWORD, new_password: 'Another789!' } });
+  assert.equal(changed.status, 200);
+  assert.equal((await api('POST', '/auth/login', { body: { email: u.email, password: 'Another789!' } })).status, 200);
+});
+
 test('ST-14 Accounts: create, rename, delete; other users cannot see them', async () => {
   const u = await newUser();
   const other = await newUser('Other');
